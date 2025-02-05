@@ -1,0 +1,64 @@
+{% extends 'base_evidence.html' %}
+
+{% block content %}
+
+    <h2>Evidence Review & Verification</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Evidence ID</th>
+                <th>Case Title</th>
+                <th>Technician</th>
+                <th>Type</th>
+                <th>Location</th>
+                <th>Collected At</th>
+                <th>Tags</th>
+                <th>Review</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for evidence in evidences %}
+            <tr>
+                <td>{{ evidence.id }}</td>
+                <td>{{ evidence.case.title }}</td>
+                <td>{{ evidence.technician.username }}</td>
+                <td>{{ evidence.evidence_type }}</td>
+                <td>{{ evidence.location }}</td>
+                <td>{{ evidence.collected_at }}</td>
+                <td>{{ evidence.tags }}</td>
+                <td>
+                    <button onclick="updateStatus({{ evidence.id }}, 'Verified')">Approve</button>
+                    <button onclick="updateStatus({{ evidence.id }}, 'Rejected')">Reject</button>
+                </td>
+                <td id="status-{{ evidence.id }}">{{ evidence.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function updateStatus(evidenceId, status) {
+        fetch(`/update-evidence/${evidenceId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ status: status })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('status-' + evidenceId).innerText = status;
+                alert('Evidence ' + evidenceId + ' marked as ' + status);
+            } else {
+                alert('Failed to update status');
+            }
+        });
+    }
+</script>
+
+{% endblock %}

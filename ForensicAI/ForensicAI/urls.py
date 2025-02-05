@@ -31,6 +31,8 @@ urlpatterns = [
     path('dashboard/case_list/',views.case_list,name='case_list'),
     path('evidence/', views.evidence_list, name='evidence_list'),
     path('evidence/upload/', views.upload_evidence, name='upload_evidence'),
+    path('update-evidence/<int:evidence_id>/', views.update_evidence, name='update_evidence'),
+    path('evidence-review/', views.evidence_review, name='evidence_review'),
 ]
 
 if settings.DEBUG:

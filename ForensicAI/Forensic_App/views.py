@@ -5,6 +5,9 @@ from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json, dlib
 
 def index(request):
     return render(request,'index.html')
@@ -109,3 +112,20 @@ def upload_evidence(request):
 
     cases = Case.objects.all()
     return render(request, "upload_evidence.html", {"cases": cases})
+
+def evidence_review(request):
+    evidences = Evidence.objects.all()
+    return render(request, 'evidence_review.html', {'evidences': evidences})
+
+@csrf_exempt
+def update_evidence(request, evidence_id):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            evidence = Evidence.objects.get(id=evidence_id)
+            evidence.status = data.get("status", evidence.status)
+            evidence.save()
+            return JsonResponse({"success": True, "status": evidence.status})
+        except Evidence.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Evidence not found"}, status=404)
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)

@@ -1,0 +1,7 @@
+asgiref @ file:///C:/b/abs_ae1n0p_8_w/croot/asgiref_1724072476516/work
+Django @ file:///C:/b/abs_d8jy6px5xv/croot/django_1731616483677/work
+dlib @ file:///D:/bld/dlib_1697537215112/work
+numpy @ file:///D:/bld/numpy_1707225519803/work/dist/numpy-1.26.4-cp312-cp312-win_amd64.whl#sha256=ffaa9485afb654c70a658c3ad4b7d2e60c60d8450d3779408d3a496564dc1d43
+setuptools==75.8.0
+sqlparse @ file:///C:/b/abs_68npyz0s6_/croot/sqlparse_1734704476369/work
+wheel==0.45.1
