@@ -1,0 +1,42 @@
+# Ignore Python compiled files
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+
+# Virtual environment
+venv/
+env/
+.env
+*.venv/
+Pipfile
+Pipfile.lock
+
+# Django-related files
+db.sqlite3
+media/
+staticfiles/
+*.log
+*.bak
+
+# Ignore Node.js dependencies (React or frontend)
+node_modules/
+npm-debug.log
+yarn-error.log
+dist/
+build/
+
+# Ignore IDE/editor files
+.vscode/
+.idea/
+*.swp
+*.sublime-project
+*.sublime-workspace
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+*.bak
+*.tmp
+
+
