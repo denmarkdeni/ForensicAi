@@ -7,7 +7,13 @@ from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import json, dlib
+import json, cv2, os
+from deepface import DeepFace
+import tensorflow as tf
+
+
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"  # Disable oneDNN logs
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"   # Suppress TensorFlow warnings
 
 def index(request):
     return render(request,'index.html')
@@ -129,3 +135,4 @@ def update_evidence(request, evidence_id):
         except Evidence.DoesNotExist:
             return JsonResponse({"success": False, "error": "Evidence not found"}, status=404)
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+
