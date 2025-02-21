@@ -6,6 +6,10 @@ from .ai_analysis import recognize_faces  # AI function
 @receiver(post_save, sender=Evidence)
 def trigger_ai_analysis(sender, instance, **kwargs):
     print('check')
-    if instance.status == 'Verified':  # AI runs only after verification'
+    if instance.file_type == 'Verified':  # AI runs only after verification'
         print("ai started")
         recognize_faces(instance.file.path)
+
+
+
+

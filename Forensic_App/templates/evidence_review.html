@@ -23,11 +23,11 @@
             <tr>
                 <td>{{ evidence.id }}</td>
                 <td>{{ evidence.case.title }}</td>
-                <td>{{ evidence.technician.username }}</td>
-                <td>{{ evidence.evidence_type }}</td>
+                <td>{{ evidence.analyst.username }}</td>
+                <td>{{ evidence.file_type }}</td>
                 <td>{{ evidence.location }}</td>
-                <td>{{ evidence.collected_at }}</td>
-                <td>{{ evidence.tags }}</td>
+                <td>{{ evidence.upload_date }}</td>
+                <td>{{ evidence.description }}</td>
                 <td>
                     <button onclick="updateStatus({{ evidence.id }}, 'Verified')">Approve</button>
                     <button onclick="updateStatus({{ evidence.id }}, 'Rejected')">Reject</button>

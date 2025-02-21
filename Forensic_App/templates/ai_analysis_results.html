@@ -1,0 +1,13 @@
+{% extends 'base_evidence.html' %}
+
+{% block content %}
+
+<h2>AI Analysis Results for Evidence ID: {{ evidence.id }}</h2>
+{% if ai_analysis.analyzed_by_ai %}
+    <p>AI Insights: {{ ai_analysis.ai_results }}</p>
+    <p>Confidence Score: {{ ai_analysis.confidence_score }}</p>
+{% else %}
+    <p>AI analysis pending...</p>
+{% endif %}
+
+{% endblock %}

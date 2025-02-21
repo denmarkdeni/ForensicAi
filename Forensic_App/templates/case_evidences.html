@@ -1,0 +1,30 @@
+{% extends 'base_evidence.html' %}
+
+{% block content %}
+
+<h2>Evidence for Case: {{ case.title }}</h2>
+<div>
+    <table>
+        <thead>
+            <tr>
+                <th>Evidence File</th>
+                <th>Evidence Type</th>
+                <th>Case Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for evidence in evidences %}
+            <tr>
+                <td>{{ evidence.file.name }}</td>
+                <td>{{ evidence.file_type }}</td>
+                <td>{{ evidence.status }}</td>
+                <td><a href="{% url 'analyze_evidence' evidence.id %}"><button>Analyze</button></a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
+

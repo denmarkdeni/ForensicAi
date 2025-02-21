@@ -1,0 +1,31 @@
+{% extends 'base_evidence.html' %}
+
+{% block content %}
+
+<h2>AI Analysis Dashboard</h2>
+<div>
+    <table>
+        <thead>
+            <tr>
+                <th>Case Title</th>
+                <th>Case Description</th>
+                <th>Case Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for case in cases %}
+            <tr>
+                <td>{{ case.title }}</td>
+                <td>{{ case.description }}</td>
+                <td>{{ case.status }}</td>
+                <td><a href="{% url 'case_evidences' case.case_id %}"><button>View Evidence</button></a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
+
+

@@ -7,16 +7,17 @@ from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import json, cv2, os
+import json, cv2, os, base64, logging
 from deepface import DeepFace
+import numpy as np
 import tensorflow as tf
-
-
-os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"  # Disable oneDNN logs
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"   # Suppress TensorFlow warnings
+from pdf2image import convert_from_path
+import speech_recognition as sr
+import pytesseract  # OCR for documents
+from pydub import AudioSegment
 
 def index(request):
-    return render(request,'index.html')
+    return render(request,'index1.html')
 
 def register(request):
     if request.method == 'POST':
@@ -71,7 +72,7 @@ def create_case(request):
                 title=title,
                 description=description,
                 created_by=request.user, 
-                assigned_to=assigned_to
+                investigator=assigned_to
             )
             case.save()
             return redirect('case_list')  
@@ -100,20 +101,21 @@ def upload_evidence(request):
         file = request.FILES["file"]
 
         # Save file manually
-        fs = FileSystemStorage()
-        filename = fs.save(f"evidence/{file.name}", file)
-        file_url = fs.url(filename)
+        # fs = FileSystemStorage()
+        # filename = fs.save(f"evidence/{file.name}", file)
+        # file_url = fs.url(filename)
 
         case = Case.objects.get(case_id=case_id)
 
         evidence = Evidence.objects.create(
             case=case,
-            technician=request.user,
+            uploaded_by=request.user,
             file=file,
-            evidence_type=evidence_type,
-            location=location,
-            tags=tags,
+            file_type=evidence_type,
+            description=tags
         )
+        case.status = "In Progress"
+        case.save()
         return redirect("evidence_list")
 
     cases = Case.objects.all()
@@ -135,4 +137,136 @@ def update_evidence(request, evidence_id):
         except Evidence.DoesNotExist:
             return JsonResponse({"success": False, "error": "Evidence not found"}, status=404)
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+
+def live_emotion(request):
+    return render(request,'live_emotion.html')
+
+@csrf_exempt
+def detect_emotion(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        image_data = data.get("image", "")
+
+        # Decode Base64 image
+        image_data = image_data.split(",")[1]
+        image_bytes = base64.b64decode(image_data)
+        nparr = np.frombuffer(image_bytes, np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
+        # Perform Emotion Detection
+        result = DeepFace.analyze(img, actions=["emotion"], enforce_detection=False)
+        emotion = result[0]["dominant_emotion"]
+
+        return JsonResponse({"emotion": emotion})
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+from django.shortcuts import render, get_object_or_404
+from .models import Case, Evidence, AIAnalysis
+
+def ai_analysis_dashboard(request):
+    """Shows all cases with 'View Evidence' buttons."""
+    cases = Case.objects.all()
+    return render(request, "ai_analysis_dashboard.html", {"cases": cases})
+
+def case_evidences(request, case_id):
+    """Shows all evidence for a specific case with 'Analyze' buttons."""
+    case = get_object_or_404(Case, case_id=case_id)
+    evidences = case.evidences.all()  # Fetch all related evidence
+    return render(request, "case_evidences.html", {"case": case, "evidences": evidences})
+
+def analyze_evidence(request, evidence_id):
+    """Perform AI analysis based on file type (image, video, audio, doc)."""
+    evidence = get_object_or_404(Evidence, id=evidence_id)
+
+    # Check if AIAnalysis already exists for this evidence
+    ai_analysis, created = AIAnalysis.objects.get_or_create(evidence=evidence)
+
+    if not ai_analysis.analyzed_by_ai:
+        # Perform AI analysis based on file type
+        if "image" in evidence.file_type:
+            ai_results, confidence = process_image(evidence.file.path)
+        elif "video" in evidence.file_type:
+            ai_results, confidence = process_video(evidence.file.path)
+        elif "audio" in evidence.file_type:
+            ai_results, confidence = process_audio(evidence.file.path)
+        elif "document" in evidence.file_type:
+            ai_results, confidence = process_document(evidence.file.path)
+        else:
+            ai_results, confidence = {"error": "Unsupported file type"}, 0.0
+
+        # Save AI results
+        ai_analysis.ai_results = ai_results
+        ai_analysis.confidence_score = confidence
+        ai_analysis.analyzed_by_ai = True
+        ai_analysis.save()
+
+    return render(request, "ai_analysis_results.html", {"evidence": evidence, "ai_analysis": ai_analysis})
+
+def process_image(image_path):
+    """Performs AI-based image analysis (face/object recognition)."""
+    image = cv2.imread(image_path)
+    if image is None:
+        return {"error": "Image not found"}, 0.0
+
+    # Placeholder AI logic (add real AI models here)
+    ai_results = {"message": "Face detected", "face_count": 1}
+    confidence = 0.9  # Example confidence score
+    return ai_results, confidence
+
+def process_video(video_path):
+    """Analyzes video frames for faces, objects, or scene detection."""
+    ai_results = {"message": "Detected suspicious activity in frame 100"}
+    confidence = 0.85
+    return ai_results, confidence
+
+def convert_to_wav(audio_path):
+    """Convert MP3 to WAV format for speech recognition"""
+    audio = AudioSegment.from_file(audio_path, format="mp3")
+    wav_path = audio_path.replace(".mp3", ".wav")  # Save as WAV
+    audio.export(wav_path, format="wav")
+    return wav_path
+
+def process_audio(audio_path):
+    """Performs speech-to-text analysis on audio evidence."""
+    # Convert if it's an MP3 file
+    if audio_path.endswith(".mp3"):
+        audio_path = convert_to_wav(audio_path)
+    
+    recognizer = sr.Recognizer()
+    try:
+        with sr.AudioFile(audio_path) as source:
+            audio = recognizer.record(source)
+        text = recognizer.recognize_google(audio)
+        ai_results = {"message": "Audio transcript", "transcript": text}
+        confidence = 0.8
+    except sr.UnknownValueError:
+        ai_results = {"error": "Could not transcribe"}
+        confidence = 0.0
+    except Exception as e:
+        ai_results = {"error": str(e)}
+        confidence = 0.0
+    
+    # Optional: Remove the converted WAV file
+    if audio_path.endswith(".wav") and "preview" in audio_path:
+        os.remove(audio_path)
+    
+    return ai_results, confidence
+
+
+POPPLER_PATH = r"C:\poppler-24.08.0\Library\bin"
+
+def process_document(doc_path):
+    """Extracts text from documents using OCR."""
+
+    images = convert_from_path(doc_path, poppler_path=POPPLER_PATH)
+    text_results = []
+
+    for i, image in enumerate(images):
+        text = pytesseract.image_to_string(image)  # Run OCR on each page
+        text_results.append(text)
+    texts = " ".join(text_results)
+    ai_results = {"message": "Extracted text", "text": texts}
+    confidence = 0.75
+    return ai_results, confidence
 

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Emotion Detection</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <style>
+        #videofeed {
+            width: 640px;
+            height: 480px;
+            border: 1px solid #ccc;
+        }
+        #emotionResult {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Live Emotion Detection</h1>
+    <img id="videoFeed" src="http://192.168.29.109:8080/video" width="400" crossOrigin="anonymous"/>
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <script>
+        async function captureFrame() {
+            const img = document.getElementById("videoFeed");
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
+
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            return canvas.toDataURL("image/jpeg"); // Convert frame to Base64
+        }
+        async function sendFrame() {
+            try {
+                const imageData = await captureFrame();
+                const response = await fetch("/detect_emotion/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                    body: JSON.stringify({ image: imageData }),
+                });
+                const data = await response.json();
+                document.getElementById("emotionResult").innerText = `Emotion: ${data.emotion}`;
+            } catch (error) {
+                console.error("Error sending frame:", error);
+            }
+        }
+        
+        // Capture and send frames every 2 seconds
+        setInterval(sendFrame, 500);
+    </script>
+
+    <p id="emotionResult">Emotion will appear here...</p>
+        
+</body>
+</html>

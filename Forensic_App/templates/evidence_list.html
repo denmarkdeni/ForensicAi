@@ -18,12 +18,12 @@
     <tr>
         <td>{{ evidence.id }}</td>
         <td>{{ evidence.case.title }}</td>
-        <td>{{ evidence.evidence_type }}</td>
+        <td>{{ evidence.file_type }}</td>
         <td>{{ evidence.location }}</td>
-        <td>{{ evidence.technician.username }}</td>
-        <td>{{ evidence.collected_at }}</td>
+        <td>{{ evidence.case.analyst.username }}</td>
+        <td>{{ evidence.upload_date }}</td>
         <td><a href="{{ evidence.file.url }}" target="_blank">View File</a></td>
-        <td>{{ evidence.tags }}</td>
+        <td>{{ evidence.description }}</td>
         <td>{{ evidence.status }}</td>
     </tr>
     {% endfor %}

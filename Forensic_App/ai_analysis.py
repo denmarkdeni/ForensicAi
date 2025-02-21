@@ -1,10 +1,16 @@
 import cv2
 import os
 from deepface import DeepFace
+from pathlib import Path
 
-# Path to store known images (suspect database)
-KNOWN_FACES_DIR = "known_faces"
+BASE_DIR = Path(__file__).resolve().parent
+KNOWN_FACES_DIR = os.path.join(BASE_DIR, "media", "known_faces")
+TEMP_FACE_DIR = os.path.join(BASE_DIR, "media", "temp_face")
+TEMP_FACE_PATH = os.path.join(TEMP_FACE_DIR, "temp_face.jpg")
+
+# Ensure directories exist
 os.makedirs(KNOWN_FACES_DIR, exist_ok=True)
+os.makedirs(TEMP_FACE_DIR, exist_ok=True)
 
 def detect_faces(image_path):
     """Detect faces in an image using OpenCV"""
@@ -27,11 +33,10 @@ def recognize_faces(image_path):
 
     results = []
     for face in detected_faces:
-        temp_path = "temp_face.jpg"
-        cv2.imwrite(temp_path, face)
+        cv2.imwrite(TEMP_FACE_PATH, face)
 
         try:
-            analysis = DeepFace.find(temp_path, db_path=KNOWN_FACES_DIR, enforce_detection=False)
+            analysis = DeepFace.find(TEMP_FACE_PATH, db_path=KNOWN_FACES_DIR, enforce_detection=False)
             if analysis:
                 match = analysis[0].to_dict(orient="records")[0]
                 results.append({

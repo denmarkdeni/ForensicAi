@@ -33,6 +33,11 @@ urlpatterns = [
     path('evidence/upload/', views.upload_evidence, name='upload_evidence'),
     path('update-evidence/<int:evidence_id>/', views.update_evidence, name='update_evidence'),
     path('evidence-review/', views.evidence_review, name='evidence_review'),
+    path('live/', views.live_emotion, name='live_emotion'),
+    path('detect_emotion/', views.detect_emotion, name='detect_emotion'),
+    path("ai-dashboard/", views.ai_analysis_dashboard, name="ai_dashboard"),
+    path("case/<str:case_id>/evidences/", views.case_evidences, name="case_evidences"),
+    path("analyze/<int:evidence_id>/", views.analyze_evidence, name="analyze_evidence"),
 ]
 
 if settings.DEBUG:
