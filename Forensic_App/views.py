@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect
-from .models import UserInfo, Case, Evidence
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import UserInfo, Case, Evidence, AIAnalysis
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
@@ -13,8 +13,9 @@ import numpy as np
 import tensorflow as tf
 from pdf2image import convert_from_path
 import speech_recognition as sr
-import pytesseract  # OCR for documents
+import pytesseract  
 from pydub import AudioSegment
+from .ai_analysis import process_image,process_video
 
 def index(request):
     return render(request,'index1.html')
@@ -22,19 +23,27 @@ def index(request):
 def register(request):
     if request.method == 'POST':
         
-        fullname = request.POST['name']
+        fullname = request.POST['fullname']
         email = request.POST['email']
         username = request.POST['username']
         password = request.POST['password']
         user_role = request.POST['role']
 
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'Username already exists.')
+            return redirect('register')
+        
+        if User.objects.filter(email=email).exists():
+            messages.error(request, 'Email already exists.')
+            return redirect('register')
+        
         user = User.objects.create_user(username=username, email=email, password=password)
 
         UserInfo.objects.create(user=user, fullname=fullname, userRole=user_role)
 
         messages.success(request, 'Your account has been created successfully!')
         return redirect('login')
-    return render(request,'register.html')
+    return render(request,'signup.html')
 
 def Login(request):
     if request.method == 'POST':
@@ -44,17 +53,19 @@ def Login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
+            messages.success(request, 'Signed In successfully!')
             return redirect('dashboard')
             
         else:
             messages.error(request, 'Invalid username or password')
-    return render(request,'login.html')
+    return render(request,'signin.html')
 
 def dashboard(request):
     return render(request, 'dashboard.html')
 
 def Logout(request):
     logout(request)
+    messages.success(request, 'Logged Out successfully!')
     return redirect('login')
 
 def create_case(request):
@@ -161,9 +172,6 @@ def detect_emotion(request):
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 
-from django.shortcuts import render, get_object_or_404
-from .models import Case, Evidence, AIAnalysis
-
 def ai_analysis_dashboard(request):
     """Shows all cases with 'View Evidence' buttons."""
     cases = Case.objects.all()
@@ -199,26 +207,11 @@ def analyze_evidence(request, evidence_id):
         ai_analysis.ai_results = ai_results
         ai_analysis.confidence_score = confidence
         ai_analysis.analyzed_by_ai = True
+        ai_analysis.evidence.status = "reviewed"
         ai_analysis.save()
+        ai_analysis.evidence.save()
 
     return render(request, "ai_analysis_results.html", {"evidence": evidence, "ai_analysis": ai_analysis})
-
-def process_image(image_path):
-    """Performs AI-based image analysis (face/object recognition)."""
-    image = cv2.imread(image_path)
-    if image is None:
-        return {"error": "Image not found"}, 0.0
-
-    # Placeholder AI logic (add real AI models here)
-    ai_results = {"message": "Face detected", "face_count": 1}
-    confidence = 0.9  # Example confidence score
-    return ai_results, confidence
-
-def process_video(video_path):
-    """Analyzes video frames for faces, objects, or scene detection."""
-    ai_results = {"message": "Detected suspicious activity in frame 100"}
-    confidence = 0.85
-    return ai_results, confidence
 
 def convert_to_wav(audio_path):
     """Convert MP3 to WAV format for speech recognition"""

@@ -1,0 +1,33 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+.compressed-text {
+    max-height: 80px; /* Limit to approximately 4 lines */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Show only 2 lines */
+    -webkit-box-orient: vertical;
+}
+
+.expanded-text {
+    max-height: none; /* Show full text */
+    
+}
+
+.more-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    display: block;
+    margin-top: 10px;
+    width: fit-content;
+}
+
+.more-btn:hover {
+    background-color: #0056b3;
+}

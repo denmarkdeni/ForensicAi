@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login </title>
+  <style>
+    /* Reset and base styles */
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden; /* Prevent scrolling */
+    }
+
+    /* Full-screen video background */
+    .bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Ensures the video covers the entire background */
+      z-index: -1; /* Places the video behind other content */
+    }
+
+    /* Stylish login form */
+    .login-container {
+      background: rgba(255, 255, 255, 0.1); /* Transparent background */
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+      backdrop-filter: blur(10px); /* Blur effect for glass-morphism */
+      border: 1px solid rgba(255, 255, 255, 0.2); /* Light border for definition */
+      width: 350px;
+      text-align: center;
+      animation: fadeIn 1s ease-in-out; /* Fade-in animation */
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .login-container h2 {
+      margin-bottom: 25px;
+      color: #fff; /* White text */
+      font-size: 24px;
+      font-weight: bold;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Text shadow for depth */
+    }
+
+    .login-container input[type="text"],
+    .login-container input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid rgba(255, 255, 255, 0.3); /* Transparent border */
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1); /* Transparent input background */
+      color: #fff; /* White text */
+      outline: none;
+      font-size: 14px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .login-container input[type="text"]:focus,
+    .login-container input[type="password"]:focus {
+      border-color: #ff6f61; /* Coral border on focus */
+      box-shadow: 0 0 8px rgba(255, 111, 97, 0.6); /* Glow effect on focus */
+    }
+
+    .login-container input::placeholder {
+      color: rgba(255, 255, 255, 0.7); /* Light placeholder text */
+    }
+
+    .login-container button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #ff6f61, #ffcc00); /* Gradient button */
+      border: none;
+      border-radius: 8px;
+      color: #fff; /* White text */
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .login-container button:hover {
+      transform: translateY(-2px); /* Lift effect on hover */
+      box-shadow: 0 4px 15px rgba(255, 111, 97, 0.4); /* Shadow on hover */
+    }
+    /* Sign-up link styling */
+    .signup-link {
+      margin-top: 15px;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .signup-link a {
+      color: #ffcc00; /* Link color */
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .signup-link a:hover {
+      text-decoration: underline;
+    }
+    
+  </style>
+  <link href="/static/css/sweet_alert.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Background Video -->
+  <video autoplay loop muted playsinline class="bg-video">
+    <source src="/static/images/loginbg.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <!-- Login Form -->
+  <div class="login-container">
+    <h2>Login</h2>
+    <form method="POST">
+      {% csrf_token %}
+      <input type="text" name="username" placeholder="Username" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+    <p class="signup-link">New user? <a href="/register">Sign up</a></p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  {% if messages %}
+    <script>
+        {% for message in messages %}
+            Swal.fire({
+                title: "{% if message.tags == 'success' %} Success {% elif message.tags == 'error' %} Error {% elif message.tags == 'warning' %} Warning {% else %} Info {% endif %}",
+                text: "{{ message }}",
+                icon: "{{ message.tags }}", // success, error, warning, info
+                confirmButtonText: "OK",
+                customClass: {
+                  popup: "my-popup-class",
+                  title: "my-title-class",
+                  confirmButton: "my-confirm-button"
+              },
+              
+            });
+        {% endfor %}
+    </script>
+  {% endif %}
+
+
+</body>
+</html>

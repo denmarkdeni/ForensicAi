@@ -1,0 +1,16 @@
+.my-popup-class {
+    background: #133259db !important;  
+    color:rgb(255, 255, 255) !important;  
+    border-radius: 10px;
+    width:30%;
+  }
+  
+  .my-title-class {
+      font-size: 24px;
+      font-weight: bold;
+  }
+  
+  .my-confirm-button {
+      background-color:rgb(11, 85, 28) !important;
+      border: none !important;
+  }

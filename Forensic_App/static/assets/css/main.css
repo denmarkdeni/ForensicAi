@@ -258,6 +258,7 @@ h6 {
 .header .topbar .contact-info i a {
   line-height: 0;
   transition: 0.3s;
+  text-decoration: none;
 }
 
 .header .topbar .contact-info i a:hover {
@@ -283,6 +284,7 @@ h6 {
 
 .header .logo {
   line-height: 1;
+  text-decoration: none;
 }
 
 .header .logo img {
@@ -295,6 +297,7 @@ h6 {
   margin: 0;
   font-weight: 700;
   color: var(--heading-color);
+  text-decoration: none;
 }
 
 .header .cta-btn,
@@ -306,6 +309,7 @@ h6 {
   margin: 0 0 0 30px;
   border-radius: 50px;
   transition: 0.3s;
+  text-decoration: none;
 }
 
 .header .cta-btn:hover,
@@ -372,6 +376,7 @@ h6 {
 
   .navmenu a,
   .navmenu a:focus {
+    text-decoration: none;
     color: var(--nav-color);
     font-size: 15px;
     padding: 0 2px;
@@ -1724,6 +1729,3 @@ section, .section {
 /*--------------------------------------------------------------
 # Starter Section Section
 --------------------------------------------------------------*/
-.starter-section {
-  /* Add your styles here */
-}

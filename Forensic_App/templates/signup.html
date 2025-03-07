@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stylish Sign-Up Page with Video Background</title>
+  <style>
+    /* Reset and base styles */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Prevent scrolling */
+    background: transparent; /* Fallback background */
+}
+
+/* Full-screen video background */
+.bg-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures video covers the entire background */
+    z-index: -1; /* Places video behind other content */
+}
+
+/* Stylish sign-up form with full transparency */
+.signup-container {
+    background: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+    backdrop-filter: blur(15px); /* Stronger blur for better glassmorphism */
+    border: 2px solid rgba(255, 255, 255, 0.3); /* Softer white border */
+    width: 350px;
+    text-align: center;
+    animation: fadeIn 1s ease-in-out; /* Fade-in animation */
+}
+
+/* Fade-in effect */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.signup-container h2 {
+    margin-bottom: 25px;
+    color: #fff; /* White text */
+    font-size: 24px;
+    font-weight: bold;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Text shadow for depth */
+}
+
+/* Input fields */
+.signup-container input[type="text"],
+.signup-container input[type="email"],
+.signup-container input[type="password"],select {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Transparent border */
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.15); /* More transparent input background */
+    color: #fff;
+    outline: none;
+    font-size: 14px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+option{
+  color: black;
+  background-color: #a8cfc7;
+}
+/* Focus effect */
+.signup-container input[type="text"]:focus,
+.signup-container input[type="email"]:focus,
+.signup-container input[type="password"]:focus {
+    border-color: #ff6f61; /* Coral border on focus */
+    box-shadow: 0 0 8px rgba(255, 111, 97, 0.6); /* Glow effect on focus */
+}
+input[type="date"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: transparent;
+  font-size: 16px;
+  color: white;
+}
+
+/* Placeholder text */
+.signup-container input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Sign-up button */
+.signup-container button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #ff6f61, #ffcc00); /* Gradient */
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effect */
+.signup-container button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 111, 97, 0.4);
+}
+
+/* Login link */
+.signup-container .login-link {
+    margin-top: 15px;
+    display: block;
+    color: #fff;
+    font-size: 14px;
+}
+
+.signup-container .login-link a {
+    color: #ffcc00;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.signup-container .login-link a:hover {
+    text-decoration: underline;
+}
+
+  </style>
+  <link href="/static/css/sweet_alert.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Background Video -->
+  <video autoplay loop muted playsinline class="bg-video">
+    <source src="/static/images/loginbg.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <!-- Sign-Up Form -->
+  <div class="signup-container">
+    <h2>Sign Up</h2>
+    <form method="POST" action="">
+      {% csrf_token %}
+      <input type="text" name="fullname" placeholder="Full Name" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="text" name="username" placeholder="Username" required>
+      {% comment %} <input type="text" name="phone" placeholder="Number" required> {% endcomment %}
+      {% comment %} <input type="date" id="dob" placeholder="dob" required> {% endcomment %}
+      <input type="password" name="password" placeholder="Password" required>
+      <select name="role" required>
+        <option value="" disabled selected hidden>Select your role</option>
+        <option value="investigator">Investigator</option>
+        <option value="analyst">Analyst</option>
+        <option value="system_user">System User</option>
+    </select>
+      <button type="submit">Sign Up</button>
+    </form>
+    <div class="login-link">
+      Already have an account? <a href="/login">Log in</a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  {% if messages %}
+    <script>
+        {% for message in messages %}
+            Swal.fire({
+                title: "{% if message.tags == 'success' %} Success {% elif message.tags == 'error' %} Error {% elif message.tags == 'warning' %} Warning {% else %} Info {% endif %}",
+                text: "{{ message }}",
+                icon: "{{ message.tags }}", // success, error, warning, info
+                confirmButtonText: "OK",
+                customClass: {
+                  popup: "my-popup-class",
+                  title: "my-title-class",
+                  confirmButton: "my-confirm-button"
+              },
+              
+            });
+        {% endfor %}
+    </script>
+  {% endif %}
+
+</body>
+</html>
