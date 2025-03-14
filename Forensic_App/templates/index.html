@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Forensic Investigation platform</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Favicons -->
+  <link href="/static/assets/img/favicon.png" rel="icon">
+  <link href="/static/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="/static/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/static/assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="/static/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+  <link href="/static/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="/static/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/index.css"><!-- Link to CSS -->
+
+  <!-- Main CSS File -->
+  <link href="/static/assets/css/main.css" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: Medilab
+  * Template URL: https://bootstrapmade.com/medilab-free-medical-bootstrap-theme/
+  * Updated: Aug 07 2024 with Bootstrap v5.3.3
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body class="index-page">
+
+  <header id="header" class="header sticky-top">
+
+    <div class="topbar d-flex align-items-center">
+      <div class="container d-flex justify-content-center justify-content-md-between">
+        <div class="contact-info d-flex align-items-center">
+          <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:contact@example.com">ForensicAI.@gmail.com</a></i>
+          <i class="bi bi-phone d-flex align-items-center ms-4"><span>1-800-555-1234</span></i>
+        </div>
+        <div class="social-links d-none d-md-flex align-items-center">
+          <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+          <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+        </div>
+      </div>
+    </div><!-- End Top Bar -->
+
+    <div class="branding d-flex align-items-center">
+
+      <div class="container position-relative d-flex align-items-center justify-content-between">
+        <a href="index.html" class="logo d-flex align-items-center me-auto">
+          <!-- Uncomment the line below if you also wish to use an image logo -->
+          <!-- <img src="assets/img/logo.png" alt=""> -->
+          <h1 class="sitename">ForensicAI</h1>
+        </a>
+
+        <nav id="navmenu" class="navmenu">
+          <ul>
+            <li><a href="#hero" class="active">Home<br></a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#services">Features</a></li>
+            <li><a href="#departments">News</a></li>
+            <li><a href="#">Feedback</a> </li>
+            <li><a href="/register/">Register</a> </li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+          <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
+        <a class="cta-btn d-none d-sm-block" href="/login">Login</a>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  <main class="main">
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero section light-background">
+
+      <img src="/static/images/img.jpeg" alt="" data-aos="fade-in">
+
+      <div class="container position-relative">
+
+        <div class="welcome position-relative" data-aos="fade-down" data-aos-delay="100">
+          <h1 class="display-4" data-aos="fade-up" style="color: white;">Welcome to ForensicAI</h1>
+          <p class="lead" data-aos="fade-up" data-aos-delay="200" style="color: white;">
+            Revolutionizing forensic investigations with AI-powered tools.
+        </p>
+        </div><!-- End Welcome -->
+        <section id="features" class="container my-5">
+        <h3 class="text-center  mb-4" data-aos="fade-up" style="color: white;">Key Features</h3>
+        <div class="content row gy-4 justify-content center">
+          <div class="col-lg-4 d-flex align-items-stretch">
+          </div><!-- End Why Box -->
+
+          <div class="row gy-4">
+            <!-- Case Management (Aligned Left) -->
+            <div class="col-lg-4 offset-lg-0 col-md-6">
+                <div class="icon-box text-left" data-aos="zoom-out" data-aos-delay="300">
+                    <i class="bi bi-clipboard-data"></i>
+                    <h4>Case Management</h4>
+                    <p>Efficiently manage forensic cases with a centralized interface.</p>
+                </div>
+            </div>
+        
+            <!-- Evidence Repository (Aligned Right Below Case Management) -->
+            <div class="col-lg-4 offset-lg-4 col-md-6">
+                <div class="icon-box text-right" data-aos="zoom-out" data-aos-delay="300">
+                    <i class="bi bi-gem"></i>
+                    <h4>Evidence Repository</h4>
+                    <p>Store and retrieve digital evidence in a protected space.</p>
+                </div>
+            </div>
+        
+            <!-- AI Analysis (Aligned Left Below Evidence Repository) -->
+            <div class="col-lg-4 offset-lg-4 col-md-6 d-flex justify-content-center">
+                <div class="icon-box text-center" data-aos="zoom-out" data-aos-delay="300">
+                    <i class="bi bi-cpu"></i>
+                    <h4>AI Analysis</h4>
+                    <p>Leverage AI for facial recognition, image analysis, and NLP.</p>
+                </div>
+            </div>
+        </div>
+                </div><!-- End Icon Box -->
+
+              </div>
+            </div>
+          </div>
+        </div><!-- End  Content-->
+
+      </div>
+
+    </section><!-- /Hero Section -->
+
+    <!-- About Section -->
+<section id="about" class="about section">
+  <div class="container">
+      <div class="row gy-4 gx-5 align-items-center">
+          
+          <!-- Left Side: Image or Illustration -->
+          <div class="col-lg-6 position-relative" data-aos="fade-up" data-aos-delay="200">
+              <img src="/static/images/abt1.jpeg" alt="Forensic AI Visualization" class="img-fluid rounded shadow">
+          </div>
+
+          <!-- Right Side: About Content -->
+          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="300">
+              <div class="content-box p-4" style="background: white; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); border-radius: 8px;">
+                  <h1 class="text-primary">About Us</h1>
+                  <p>
+                      We are dedicated to transforming forensic investigations through cutting-edge AI-driven solutions.
+                  </p>
+                  <ul>
+                      <li><strong>AI-Driven Analytics:</strong> Advanced tools for digital forensics.</li>
+                      <li><strong>Cybercrime Tracking:</strong> Detect and prevent cyber threats.</li>
+                      <li><strong>Metadata Extraction:</strong> Secure and efficient evidence gathering.</li>
+                  </ul>
+                  <p>
+                      Our platform ensures security, confidentiality, and precision, making forensic investigations more effective.
+                  </p>
+              </div>
+          </div>
+
+      </div>
+  </div>
+</section>
+    
+        
+    <!-- Stats Section -->
+    <section id="stats" class="stats section light-background">
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row gy-4">
+
+          <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
+            <i class="fa-solid fa-user-shield"></i>
+            <div class="stats-item">
+              <span data-purecounter-start="0" data-purecounter-end="85" data-purecounter-duration="1" class="purecounter"></span>
+              <p>Investigation Officers</p>
+            </div>
+          </div><!-- End Stats Item -->
+
+          <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
+            <i class="fa-solid fa-building"></i>
+            <div class="stats-item">
+              <span data-purecounter-start="0" data-purecounter-end="18" data-purecounter-duration="1" class="purecounter"></span>
+              <p>Departments</p>
+            </div>
+          </div><!-- End Stats Item -->
+
+          <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
+            <i class="fa-solid fa-file-invoice "></i>
+            <div class="stats-item">
+              <span data-purecounter-start="0" data-purecounter-end="58" data-purecounter-duration="1" class="purecounter"></span>
+              <p>Total Cases</p>
+            </div>
+          </div><!-- End Stats Item -->
+
+          <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
+            <i class="fa-solid fa-check-circle"></i>
+            <div class="stats-item">
+              <span data-purecounter-start="0" data-purecounter-end="32" data-purecounter-duration="1" class="purecounter"></span>
+              <p>Closed cases</p>
+            </div>
+          </div><!-- End Stats Item -->
+
+        </div>
+
+      </div>
+
+    </section><!-- /Stats Section -->
+
+    <!-- Services Section -->
+    <section id="services" class="services section">
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forensic Investigation Services</title>
+    <link rel="stylesheet" href="/static/css/index.css"> <!-- Ensure this path is correct -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        /* Inline CSS for demonstration; ideally, include this in your external stylesheet */
+        .compressed-text {
+            max-height: 80px; /* Adjust as needed */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* Show only 2 lines */
+            -webkit-box-orient: vertical;
+        }
+        .expanded-text {
+            max-height: none; /* Show full text */
+        }
+        .more-btn {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header class="text-center py-4">
+        <h1>Forensic Investigation Services</h1>
+    </header>
+
+    <section id="services" class="services section py-5">
+        <div class="container">
+            <!-- Section Title -->
+            <div class="text-center mb-4" data-aos="fade-up">
+                <h2>Our Services</h2>
+                <hr style="width: 50px; border: 2px solid blue;">
+            </div>
+
+            <!-- Service Item -->
+            <div class="service-item mb-5">
+                <h2 class="text-center" style="margin-top:40px;">Digital Forensics</h2>
+                <div class="row align-items-center gy-4">
+                    <div class="col-lg-5" data-aos="fade-right">
+                        <img src="/static/images/for3.jpeg" alt="Digital Forensics" class="img-fluid rounded shadow">
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="text-container compressed-text">
+                            <h3>Introduction to Digital Forensics</h3>
+                            <p>Digital Forensics is the branch of forensic science that deals with the identification, collection, preservation, analysis, and presentation of digital evidence found in electronic devices. It is commonly used in cybercrime investigations, legal proceedings, and corporate security.</p>
+                            <h4>Key Aspects of Digital Forensics</h4>
+                            <ul>
+                                <li>Data Recovery & Analysis – Extracting and analyzing data from digital devices.</li>
+                                <li>Cybercrime Investigation – Tracking hackers, fraudsters, and other cybercriminals.</li>
+                                <li>Legal & Law Enforcement – Providing digital evidence for court cases.</li>
+                                <li>Incident Response – Identifying and mitigating security breaches.</li>
+                                <li>Network & Malware Forensics – Analyzing network traffic and malware threats.</li>
+                            </ul>
+                            <h4>Types of Digital Forensics</h4>
+                            <ul>
+                                <li>Computer Forensics – Investigating evidence from computers.</li>
+                                <li>Mobile Forensics – Extracting data from smartphones.</li>
+                                <li>Network Forensics – Monitoring and analyzing network activity.</li>
+                                <li>Cloud Forensics – Investigating cloud-stored data.</li>
+                                <li>Database Forensics – Examining database records.</li>
+                            </ul>
+                            <h4>Tools Used</h4>
+                            <ul>
+                                <li>Autopsy – Open-source forensic tool</li>
+                                <li>EnCase – Commercial forensic software</li>
+                                <li>FTK (Forensic Toolkit) – Used for disk imaging and analysis</li>
+                                <li>Wireshark – For network traffic analysis</li>
+                            </ul>
+                            <h4>Applications of Digital Forensics</h4>
+                            <ul>
+                                <li>Solving cybercrimes (hacking, fraud, identity theft)</li>
+                                <li>Investigating insider threats</li>
+                                <li>Gathering evidence in criminal cases</li>
+                                <li>Ensuring cybersecurity and compliance</li>
+                            </ul>
+                        </div>
+                        <button class="toggle-button btn btn-primary more-btn">More</button>
+                    </div>
+                </div>
+            </div>
+
+            <!--Crime analysis -->
+            <div class="service-item mb-5">
+              <h2 class="text-center" style="margin-top:40px;">Crime Analysis</h2>
+              <div class="row align-items-center gy-4">
+                  <div class="col-lg-5">
+                      <img src="/static/images/for4.jpeg" alt="Crime analysis" class="img-fluid rounded shadow">
+                  </div>
+                  <div class="col-lg-7">
+                      <div class="text-container compressed-text">
+                          <h3>Introduction to Crime Scene Analysis</h3>
+                          <p>Crime scene analysis is a meticulous process aimed at uncovering the events surrounding a crime by examining the scene and collecting physical evidence. This process is crucial for reconstructing the crime, identifying perpetrators, and securing convictions.</p>
+                          <h4>Key Steps in Crime Scene Analysis:</h4>
+                          <ul>
+                              <li><strong>Securing the Scene</strong>: First responders establish a perimeter to prevent unauthorized access, ensuring that evidence remains uncontaminated.</li>
+                              <li><strong>Systematic Search for Evidence</strong>: Investigators conduct a thorough search to locate potential evidence, which may include weapons, biological samples, or personal belongings.</li>
+                              <li><strong>Documentation</strong>: Detailed records are maintained through photographs, sketches, and notes, capturing the scene's condition and the exact location of evidence.</li>
+                              <li><strong>Evidence Collection and Preservation</strong>: Collected items are carefully handled, packaged, and labeled to prevent degradation or contamination, maintaining the integrity of the evidence for laboratory analysis.</li>
+                              <li><strong>Reconstruction and Analysis</strong>: By interpreting the collected evidence, investigators reconstruct the sequence of events, which aids in forming investigative leads and hypotheses.</li>
+                          </ul>
+                          <h4>Recent Advancements in Crime Scene Analysis:</h4>
+                          <ul>
+                              <li><strong>3D Scanning Technology</strong>: The use of handheld 3D scanners allows for precise documentation of crime scenes, capturing detailed spatial information that aids in reconstructing events.</li>
+                              <li><strong>Bloodstain Pattern Analysis Software</strong>: Emerging tools analyze bloodstain patterns to estimate the area of origin of bloodshed events, providing insights into the actions that occurred during the crime.</li>
+                              <li><strong>Portable DNA Extraction Kits</strong>: Advancements in miniaturized DNA extraction kits enable rapid, on-site analysis of biological evidence, expediting the investigative process.</li>
+                              <li><strong>Investigative Genetic Genealogy (IGG)</strong>: Combining DNA analysis with genealogical research, IGG has been instrumental in solving cold cases by identifying suspects through familial connections.</li>
+                          </ul>
+                      </div>
+                      <button class="toggle-button btn btn-primary more-btn">More</button>
+                  </div>
+              </div>
+          </div>
+          
+          <style>
+            /* Remove any hover effects */
+            .service-item:hover,
+            .service-item .text-container:hover,
+            .service-item img:hover,
+            .service-item .card:hover {
+                background-color: transparent !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+        
+            /* Remove Bootstrap focus/hover blue border */
+            .service-item:focus, 
+            .service-item .card:focus,
+            .service-item .text-container:focus,
+            .btn-primary:focus,
+            .btn:focus {
+                outline: none !important;
+                border: none !important;
+                box-shadow: none !important;
+            }
+        
+            /* Fix disappearing text by keeping text color consistent */
+            .service-item,
+            .service-item .text-container,
+            .service-item h3,
+            .service-item h4,
+            .service-item p,
+            .service-item li {
+                color: black !important;
+            }
+        
+            /* Button stays the same on hover */
+            .btn-primary:hover,
+            .btn-primary:focus {
+                background-color: #007bff !important;
+                border-color: #007bff !important;
+                color: white !important;
+            }
+            .service-item {
+              width: 99%; /* Slightly enlarged */
+              padding: 20px; /* More padding for a spacious feel */
+              border: 4px solid #004080; /* Blue border */
+              border-radius: 12px; /* Smooth corners */
+              transition: transform 0.5s ease-out, border 0.5s ease-out;
+          }
+          
+          /* Pop-up effect on hover */
+          .service-item:hover {
+              transform: scale(1.05); /* Slight enlargement */
+              border-color:rgb(2, 62, 226); /* Slightly brighter blue on hover */
+          }
+        </style>
+          
+
+          <div class="service-item mb-5">
+            <h2 class="text-center" style="margin-top:40px;">Fraud Detection System</h2>
+            <div class="row align-items-center gy-4">
+                <div class="col-lg-5" data-aos="fade-right">
+                    <img src="/static/images/for5.jpeg" alt="Fraud detection" class="img-fluid rounded shadow">
+                </div>
+                <div class="col-lg-7">
+                    <div class="text-container compressed-text">
+                        <h3>Introduction to Fraud Detection in Forensic Investigation</h3>
+                        <p>Fraud detection plays a crucial role in forensic investigations. Advanced technologies, including AI and machine learning, help identify fraudulent activities in financial transactions, cybercrimes, and identity theft.</p>
+                        <h4>Fraud Detection Techniques</h4>
+                        <ul>
+                        <li><strong>Data Analysis & Pattern Recognition:</strong> Identifies irregularities and unusual patterns in financial transactions.</li>
+                        <li><strong>AI and Machine Learning Algorithms:</strong> Uses predictive models to detect anomalies and suspicious activities.</li>
+                        <li><strong>Blockchain for Secure Transactions:</strong> Ensures transparency and security in financial operations.</li>
+                        <li><strong>Forensic Accounting Methods:</strong> Investigates financial records to uncover fraud and financial misstatements.</li>
+                        <li><strong>Network Analysis:</strong> Tracks connections and interactions to detect suspicious behavior.</li>
+                        <li><strong>Behavioral Analysis:</strong> Monitors user activity and identifies deviations from normal behavior.</li>
+                        <li><strong>Benford’s Law Analysis:</strong> Uses mathematical principles to detect anomalies in financial data.</li>
+                    </ul>
+                    
+                    </div>
+                    <button class="toggle-button btn btn-primary more-btn">More</button>
+                </div>
+            </div>
+        </div>
+
+            <!-- Repeat similar blocks for other services like Crime Scene Analysis, Fraud Investigation, etc. -->
+            <!-- Ensure each .service-item has its own unique content -->
+
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var serviceItems = document.querySelectorAll(".service-item");
+
+            serviceItems.forEach(function (item) {
+                var textContainer = item.querySelector(".text-container");
+                var button = item.querySelector(".toggle-button");
+
+                button.addEventListener("click", function () {
+                    if (textContainer.classList.contains("compressed-text")) {
+                        textContainer.classList.remove("compressed-text");
+                        textContainer.classList.add("expanded-text");
+                        button.innerText = "Less";
+                    } else {
+                        textContainer.classList.remove("expanded-text");
+                        textContainer.classList.add("compressed-text");
+                        button.innerText = "More";
+                    }
+                });
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>COMPLAINT</h2>
+        <p>Please enter only valid details for accurate case reviewal and contact from the authorities.</p>
+      </div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <form action="forms/appointment.php" method="post" role="form" class="php-email-form">
+          <div class="row">
+            <div class="col-md-4 form-group">
+              <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required="">
+            </div>
+            <div class="col-md-4 form-group mt-3 mt-md-0">
+              <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required="">
+            </div>
+            <div class="col-md-4 form-group mt-3 mt-md-0">
+              <input type="tel" class="form-control" name="phone" id="phone" placeholder="Your Phone" required="">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 form-group mt-3">
+              <input type="datetime-local" name="date" class="form-control datepicker" id="date" placeholder="Date" required="">
+            </div>
+            <div class="col-md-4 form-group mt-3">
+                <input type="text" name="name" class="form-control" id="name" placeholder="Complaint number(Enter a 6 digit number)" required="">
+            </div>
+          </div>
+
+          <div class="form-group mt-3">
+            <textarea class="form-control" name="message" rows="5" placeholder="Description(Brief your complaint)"></textarea>
+          </div>
+          <div class="mt-3">
+            <div class="loading">Loading</div>
+            <div class="error-message"></div>
+            <div class="sent-message">Your complaint request has been sent successfully. Thank you!</div>
+            <div class="text-center"><button type="submit">Submit</button></div>
+          </div>
+        </form>
+
+      </div>
+
+    </section>
+    <!-- /Appointment Section -->
+
+  
+    
+
+    <!-- Testimonials Section -->
+   <!-- Top News Section -->
+<section id="top-news" class="news section">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-5 info" data-aos="fade-up" data-aos-delay="100">
+        <h3>Top News</h3>
+        <p>Stay updated with the latest forensic investigations, breakthroughs, and criminal activities around the world.</p>
+      </div>
+
+      <div class="col-lg-7" data-aos="fade-up" data-aos-delay="200">
+        <div class="swiper init-swiper">
+          <script type="application/json" class="swiper-config">
+            {
+              "loop": true,
+              "speed": 600,
+              "autoplay": { "delay": 5000 },
+              "slidesPerView": "auto",
+              "pagination": { "el": ".swiper-pagination", "type": "bullets", "clickable": true }
+            }
+          </script>
+
+          <div class="swiper-wrapper">
+            <!-- News Item 1 -->
+            <div class="swiper-slide">
+              <div class="news-item">
+                <img src="/static/assets/img/news/news-1.jpg" class="news-img" alt="">
+                <h4>Major Breakthrough in Cybercrime Investigation</h4>
+                <p>Authorities have cracked down on a large-scale cybercrime operation that defrauded thousands worldwide.</p>
+              </div>
+            </div>
+
+            <!-- News Item 2 -->
+            <div class="swiper-slide">
+              <div class="news-item">
+                <img src="/static/assets/img/news/news-2.jpg" class="news-img" alt="">
+                <h4>DNA Evidence Solves Decades-Old Murder Case</h4>
+                <p>A cold case dating back 30 years has finally been solved thanks to advanced DNA analysis.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="swiper-pagination"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Most Wanted Criminals Section -->
+<section id="most-wanted" class="wanted section">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-5 info" data-aos="fade-up" data-aos-delay="100">
+        <h3>Most Wanted Criminals</h3>
+        <p>These individuals are highly wanted for serious crimes. Report any information to authorities.</p>
+      </div>
+
+      <div class="col-lg-7" data-aos="fade-up" data-aos-delay="200">
+        <div class="swiper init-swiper">
+          <script type="application/json" class="swiper-config">
+            {
+              "loop": true,
+              "speed": 600,
+              "autoplay": { "delay": 5000 },
+              "slidesPerView": "auto",
+              "pagination": { "el": ".swiper-pagination", "type": "bullets", "clickable": true }
+            }
+          </script>
+
+          <div class="swiper-wrapper">
+            <!-- Criminal 1 -->
+            <div class="swiper-slide">
+              <div class="wanted-item">
+                <img src="/static/assets/img/wanted/criminal-1.jpg" class="wanted-img" alt="">
+                <h4>John Doe</h4>
+                <p>Wanted for armed robbery and multiple homicide cases. Last seen in New York City.</p>
+              </div>
+            </div>
+
+            <!-- Criminal 2 -->
+            <div class="swiper-slide">
+              <div class="wanted-item">
+                <img src="/static/assets/img/wanted/criminal-2.jpg" class="wanted-img" alt="">
+                <h4>Jane Smith</h4>
+                <p>Suspected of financial fraud and cybercrimes affecting thousands of victims.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="swiper-pagination"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Video Footages Section -->
+<section id="video-footages" class="videos section">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-5 info" data-aos="fade-up" data-aos-delay="100">
+        <h3>Video Footages</h3>
+        <p>Surveillance and crime scene footages to help in forensic investigations.</p>
+      </div>
+
+      <div class="col-lg-7" data-aos="fade-up" data-aos-delay="200">
+        <div class="swiper init-swiper">
+          <script type="application/json" class="swiper-config">
+            {
+              "loop": true,
+              "speed": 600,
+              "autoplay": { "delay": 5000 },
+              "slidesPerView": "auto",
+              "pagination": { "el": ".swiper-pagination", "type": "bullets", "clickable": true }
+            }
+          </script>
+
+          <div class="swiper-wrapper">
+            <!-- Video 1 -->
+            <div class="swiper-slide">
+              <div class="video-item">
+                <video controls class="video-footage">
+                  <source src="/static/assets/videos/footage-1.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+                <h4>Bank Robbery Surveillance</h4>
+                <p>Captured footage from a bank heist that occurred last week.</p>
+              </div>
+            </div>
+
+            <!-- Video 2 -->
+            <div class="swiper-slide">
+              <div class="video-item">
+                <video controls class="video-footage">
+                  <source src="/static/assets/videos/footage-2.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+                <h4>Crime Scene Evidence</h4>
+                <p>Police have released a crucial video from a recent forensic investigation.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="swiper-pagination"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+    </section><!-- /Testimonials Section -->
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Gallery</h2>
+        <p>Here are some photo samples of the procedures of our work.</p>
+      </div><!-- End Section Title -->
+
+      <div class="container-fluid" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row g-0">
+
+          <div class="col-lg-3 col-md-4">
+            <div class="gallery-item">
+              <a href="/static/images/for1.jpeg" class="glightbox" data-gallery="images-gallery">
+                <img src="/static/images/for1.jpeg" alt="" class="img-fluid">
+              </a>
+            </div>
+          </div><!-- End Gallery Item -->
+
+          <div class="col-lg-3 col-md-4">
+            <div class="gallery-item">
+              <a href="/static/images/for2.jpeg" class="glightbox" data-gallery="images-gallery">
+                <img src="/static/images/for2.jpeg" alt="" class="img-fluid">
+              </a>
+            </div>
+          </div><!-- End Gallery Item -->
+
+          <div class="col-lg-3 col-md-4">
+            <div class="gallery-item">
+              <a href="/static/images/for3.jpeg" class="glightbox" data-gallery="images-gallery">
+                <img src="/static/images/for3.jpeg" alt="" class="img-fluid">
+              </a>
+            </div>
+          </div><!-- End Gallery Item -->
+
+          <div class="col-lg-3 col-md-4">
+            <div class="gallery-item">
+              <a href="/static/images/for4.jpeg" class="glightbox" data-gallery="images-gallery">
+                <img src="/static/images/for4.jpeg" alt="" class="img-fluid">
+              </a>
+            </div>
+          </div><!-- End Gallery Item -->
+
+          <div class="col-lg-3 col-md-4">
+            <div class="gallery-item">
+              <a href="/static/images/for5.jpeg" class="glightbox" data-gallery="images-gallery">
+                <img src="/static/images/for5.jpeg" alt="" class="img-fluid">
+              </a>
+            </div>
+          </div><!-- End Gallery Item -->
+
+          <div class="col-lg-3 col-md-4">
+            <div class="gallery-item">
+              <a href="/static/images/for6.jpeg" class="glightbox" data-gallery="images-gallery">
+                <img src="/static/images/for6.jpeg" alt="" class="img-fluid">
+              </a>
+            </div>
+          </div><!-- End Gallery Item -->
+
+          <div class="col-lg-3 col-md-4">
+            <div class="gallery-item">
+              <a href="/static/images/abt1.jpeg" class="glightbox" data-gallery="images-gallery">
+                <img src="/static/images/abt1.jpeg" alt="" class="img-fluid">
+              </a>
+            </div>
+          </div><!-- End Gallery Item -->
+
+          <div class="col-lg-3 col-md-4">
+            <div class="gallery-item">
+              <a href="/static/images/for1.jpeg" class="glightbox" data-gallery="images-gallery">
+                <img src="/static/images/for1.jpeg" alt="" class="img-fluid">
+              </a>
+            </div>
+          </div><!-- End Gallery Item -->
+
+        </div>
+
+      </div>
+
+    </section><!-- /Gallery Section -->
+
+   
+    <!-- Contact Section -->
+    <section id="contact" class="contact section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Contact</h2>
+        <p>Users can provide valid informations and feedbacks about the cases,approach of the investigation officers and on time response from the respective department.</p>
+      </div><!-- End Section Title -->
+
+      <div class="mb-5" data-aos="fade-up" data-aos-delay="200">
+        <iframe style="border:0; width: 100%; height: 270px;" src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d463.1402782042772!2d76.95016662978267!3d8.48902297269416!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1739352487463!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div><!-- End Google Maps -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row gy-4">
+
+          <div class="col-lg-4">
+            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
+              <i class="bi bi-geo-alt flex-shrink-0"></i>
+              <div>
+                <h3>Location</h3>
+                <p>SS Kovil Road,thampanoor,Tvpm</p>
+              </div>
+            </div><!-- End Info Item -->
+
+            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
+              <i class="bi bi-telephone flex-shrink-0"></i>
+              <div>
+                <h3>Call Us</h3>
+                <p>+91 755 9001 755</p>
+              </div>
+            </div><!-- End Info Item -->
+
+            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="500">
+              <i class="bi bi-envelope flex-shrink-0"></i>
+              <div>
+                <h3>Email Us</h3>
+                <p>forensicai@google.com</p>
+              </div>
+            </div><!-- End Info Item -->
+
+          </div>
+
+          <div class="col-lg-8">
+            <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
+              <div class="row gy-4">
+
+                <div class="col-md-6">
+                  <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
+                </div>
+
+                <div class="col-md-6 ">
+                  <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
+                </div>
+
+                <div class="col-md-12">
+                  <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
+                </div>
+
+                <div class="col-md-12">
+                  <textarea class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
+                </div>
+
+                <div class="col-md-12 text-center">
+                  <div class="loading">Loading</div>
+                  <div class="error-message"></div>
+                  <div class="sent-message">Your message has been sent. Thank you!</div>
+
+                  <button type="submit">Send Message</button>
+                </div>
+
+              </div>
+            </form>
+          </div><!-- End Contact Form -->
+
+        </div>
+
+      </div>
+
+    </section><!-- /Contact Section -->
+
+  </main>
+
+  <footer id="footer" class="footer light-background">
+
+    <div class="container footer-top">
+      <div class="row gy-4">
+        <div class="col-lg-4 col-md-6 footer-about">
+          <a href="index.html" class="logo d-flex align-items-center">
+            <span class="sitename">ForensicAI</span>
+          </a>
+          <div class="footer-contact pt-3">
+            <p>SS Kovil Road</p>
+            <p>Thampanoor,Tvpm</p>
+            <p class="mt-3"><strong>Phone:</strong> <span>+91 755 9001 755</span></p>
+            <p><strong>Email:</strong> <span>forensicai@gmail.com.com</span></p>
+          </div>
+          <div class="social-links d-flex mt-4">
+            <a href="#"><i class="bi bi-twitter-x"></i></a>
+            <a href="#"><i class="bi bi-facebook"></i></a>
+            <a href="#"><i class="bi bi-instagram"></i></a>
+            <a href="#"><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Useful Links</h4>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About us</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Terms of service</a></li>
+            <li><a href="#">Privacy policy</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Our Services</h4>
+          <ul>
+            <li><a href="#">Digital Evidence Collection</a></li>
+            <li><a href="#">Biometric recognition</a></li>
+            <li><a href="#">Image recogonistion</a></li>
+            <li><a href="#">Case Summarization</a></li>
+            <li><a href="#">Frequent review of case</a></li>
+          </ul>
+        </div>
+
+        
+      </div>
+    </div>
+
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">ForensicAI</strong> <span>All Rights Reserved.2025</span></p>
+      <div class="credits">
+        <!-- All the links in the footer should remain intact. -->
+        <!-- You can delete the links only if you've purchased the pro version. -->
+        <!-- Licensing information: https://bootstrapmade.com/license/ -->
+        <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
+        
+      </div>
+    </div>
+
+  </footer>
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="/static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/assets/vendor/php-email-form/validate.js"></script>
+  <script src="/static/assets/vendor/aos/aos.js"></script>
+  <script src="/static/assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="/static/assets/vendor/purecounter/purecounter_vanilla.js"></script>
+  <script src="/static/assets/vendor/swiper/swiper-bundle.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="/static/assets/js/main.js"></script>
+
+</body>
+
+</html>

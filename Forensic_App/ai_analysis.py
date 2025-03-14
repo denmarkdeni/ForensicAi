@@ -8,6 +8,14 @@ from PIL import Image, ImageChops, ImageEnhance, ImageFilter
 from PIL.ExifTags import TAGS
 import imutils, json
 from ultralytics import YOLO
+import speech_recognition as sr
+from pydub import AudioSegment
+import torch
+import torchaudio
+import nltk
+from resemblyzer import preprocess_wav, VoiceEncoder
+import whisper
+from pdf2image import convert_from_path
 
 MODEL_PATH = r"C:\Users\Admin\Desktop\Maria Deniston\ForensicAi\Forensic_App\models\\"
 BASE_DIR = Path(__file__).resolve().parent
@@ -350,3 +358,89 @@ def process_video(video_path):
         return {"message": "Suspicious activity detected", "detections": detections}, max(d["confidence"] for d in detections)
     else:
         return {"message": "No suspicious activity detected"}, 0.0
+    
+# Suspicious phrases database (extend as needed)
+SUSPICIOUS_PHRASES = ["help", "gun", "kill", "hide the body", "threaten", "run", "scream","murder","robbery","theft","kidnap","abduction","assault"]
+
+# Load AI Models
+whisper_model = whisper.load_model("small")  # Whisper for transcription
+encoder = VoiceEncoder()  # Speaker recognition model
+
+def convert_to_wav(audio_path):
+    """Converts MP3 or other formats to WAV"""
+    new_path = audio_path.replace(".mp3", ".wav")
+    sound = AudioSegment.from_file(audio_path)
+    sound.export(new_path, format="wav")
+    return new_path
+
+def detect_suspicious_phrases(text):
+    """Flags if suspicious words are found in the transcript."""
+    detected_phrases = [phrase for phrase in SUSPICIOUS_PHRASES if phrase in text.lower()]
+    return detected_phrases
+
+def identify_speaker(audio_path):
+    """Identifies if multiple speakers exist."""
+    wav = preprocess_wav(audio_path)
+    embed = encoder.embed_utterance(wav)
+    return np.linalg.norm(embed)  # Returns a unique voice signature
+
+def process_audio(audio_path):
+    """Analyzes audio for speech, threats, and sound classification."""
+    if audio_path.endswith(".mp3"):
+        audio_path = convert_to_wav(audio_path)
+
+    recognizer = sr.Recognizer()
+    try:
+        with sr.AudioFile(audio_path) as source:
+            audio = recognizer.record(source)
+        
+        # Whisper AI for better transcription
+        result = whisper_model.transcribe(audio_path)
+        text = result["text"]
+        
+        # Detect suspicious phrases
+        flagged_phrases = detect_suspicious_phrases(text)
+        
+        # Speaker identification
+        speaker_signature = identify_speaker(audio_path)
+        
+        # Confidence metric (simplified)
+        confidence = 0.85 if text else 0.0
+
+        # AI Analysis Result
+        ai_results = {
+            "message": "Audio transcript analyzed",
+            "transcript": text,
+            "suspicious_phrases": flagged_phrases,
+            "speaker_signature": str(speaker_signature),
+            "confidence": confidence
+        }
+
+        if audio_path.endswith(".wav") and os.path.exists(audio_path):
+            os.remove(audio_path)
+    
+    except sr.UnknownValueError:
+        ai_results = {"error": "Could not transcribe"}
+        confidence = 0.0
+    except Exception as e:
+        ai_results = {"error": str(e)}
+        confidence = 0.0
+
+    return ai_results, confidence
+
+    
+POPPLER_PATH = r"C:\poppler-24.08.0\Library\bin"
+
+def process_document(doc_path):
+    """Extracts text from documents using OCR."""
+
+    images = convert_from_path(doc_path, poppler_path=POPPLER_PATH)
+    text_results = []
+
+    for i, image in enumerate(images):
+        text = pytesseract.image_to_string(image)  # Run OCR on each page
+        text_results.append(text)
+    texts = " ".join(text_results)
+    ai_results = {"message": "Extracted text", "text": texts}
+    confidence = 0.75
+    return ai_results, confidence

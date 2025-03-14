@@ -57,7 +57,7 @@ def validate_evidence_file(value):
         'image': ['.jpg', '.jpeg', '.png', '.gif'],
         'video': ['.mp4', '.avi', '.mov'],
         'document': ['.pdf', '.docx', '.txt'],
-        'audio': ['.mp3', '.wav'],
+        'audio': ['.mp3', '.wav','mpeg'],
     }
     
     file_type = None

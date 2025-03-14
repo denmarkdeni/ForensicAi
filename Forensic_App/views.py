@@ -10,15 +10,10 @@ from django.views.decorators.csrf import csrf_exempt
 import json, cv2, os, base64, logging
 from deepface import DeepFace
 import numpy as np
-import tensorflow as tf
-from pdf2image import convert_from_path
-import speech_recognition as sr
-import pytesseract  
-from pydub import AudioSegment
-from .ai_analysis import process_image,process_video
+from .ai_analysis import process_image, process_video, process_audio, process_document
 
 def index(request):
-    return render(request,'index1.html')
+    return render(request,'index.html')
 
 def register(request):
     if request.method == 'POST':
@@ -61,7 +56,7 @@ def Login(request):
     return render(request,'signin.html')
 
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    return render(request, 'admin_base.html')
 
 def Logout(request):
     logout(request)
@@ -213,53 +208,5 @@ def analyze_evidence(request, evidence_id):
 
     return render(request, "ai_analysis_results.html", {"evidence": evidence, "ai_analysis": ai_analysis})
 
-def convert_to_wav(audio_path):
-    """Convert MP3 to WAV format for speech recognition"""
-    audio = AudioSegment.from_file(audio_path, format="mp3")
-    wav_path = audio_path.replace(".mp3", ".wav")  # Save as WAV
-    audio.export(wav_path, format="wav")
-    return wav_path
 
-def process_audio(audio_path):
-    """Performs speech-to-text analysis on audio evidence."""
-    # Convert if it's an MP3 file
-    if audio_path.endswith(".mp3"):
-        audio_path = convert_to_wav(audio_path)
-    
-    recognizer = sr.Recognizer()
-    try:
-        with sr.AudioFile(audio_path) as source:
-            audio = recognizer.record(source)
-        text = recognizer.recognize_google(audio)
-        ai_results = {"message": "Audio transcript", "transcript": text}
-        confidence = 0.8
-    except sr.UnknownValueError:
-        ai_results = {"error": "Could not transcribe"}
-        confidence = 0.0
-    except Exception as e:
-        ai_results = {"error": str(e)}
-        confidence = 0.0
-    
-    # Optional: Remove the converted WAV file
-    if audio_path.endswith(".wav") and "preview" in audio_path:
-        os.remove(audio_path)
-    
-    return ai_results, confidence
-
-
-POPPLER_PATH = r"C:\poppler-24.08.0\Library\bin"
-
-def process_document(doc_path):
-    """Extracts text from documents using OCR."""
-
-    images = convert_from_path(doc_path, poppler_path=POPPLER_PATH)
-    text_results = []
-
-    for i, image in enumerate(images):
-        text = pytesseract.image_to_string(image)  # Run OCR on each page
-        text_results.append(text)
-    texts = " ".join(text_results)
-    ai_results = {"message": "Extracted text", "text": texts}
-    confidence = 0.75
-    return ai_results, confidence
 
