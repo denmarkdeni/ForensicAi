@@ -1,0 +1,157 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+      
+      <!-- Case Management -->
+      <div class="mt-4">
+        <h2>Case Management</h2>
+        <div class="card">
+          <div class="chart-container">
+            <canvas id="casesChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Create Case -->
+      <div class="mt-4" id="CreateCase">
+        <h2>Create Case</h2>
+        <div class="card">
+            <div class="add_user">
+                <input type="text" id="caseId" class="form-control" placeholder="Case ID" required>
+                <input type="text" id="caseName" class="form-control" placeholder="Case Name" required>     
+                <select id="caseAssignedTo" class="form-control" >
+                    <option value="">Select an Investigator</option>
+                    {% for user in investigators %}
+                        <option value="{{ user.user.id }}">{{ user.user.username }}</option>
+                    {% endfor %}
+                </select>   
+            </div>
+            <textarea id="caseDescription" class="form-control mt-2" placeholder="Case Description" rows=3 required></textarea>
+            <button id="createCase" class="btn btn-primary mt-2">Create Case</button>
+        </div>
+      </div>
+
+      <!-- Case List -->
+      <div class="mt-4" id="CaseList">
+        <h2>Case List</h2>
+        <div class="card">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Case ID</th>
+                        <th>Case Name</th>
+                        <th>Start Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for case in cases %}
+                    <tr data-case-id="{{ case.id }}">
+                        <td>{{ case.case_id }}</td>
+                        <td>{{ case.title }}</td>
+                        <td>{{ case.created_at }}</td>
+                        <td>{{ case.status }}</td>
+                        <td>
+                            <a href="/view_case_details/{{ case.case_id }}" class="btn btn-primary">View Details</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+      </div>
+
+  <!-- Chart.js Script -->
+  <script>
+
+    const TotalCases = {{ total_cases }};
+    const OpenCases = {{ open_cases }};
+    const InProgressCases = {{ in_progress_cases }};
+    const ClosedCases = {{ closed_cases }}; 
+
+    const ctx = document.getElementById('casesChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',  // Changed to Bar Chart
+      data: {
+        labels: ['Total Cases', 'Opened Cases', 'In Progressed Cases', 'Closed Cases'],
+        datasets: [{
+          label: 'Case Status',
+          data: [TotalCases, OpenCases, InProgressCases, ClosedCases],
+          backgroundColor: ['#21390a', '#4d8518', '#7ad127', '#2ae58f'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // create case
+    document.getElementById("createCase").addEventListener("click", function() {
+        let caseId = document.getElementById("caseId").value.trim();
+        let caseName = document.getElementById("caseName").value.trim();
+        let caseAssignedTo = document.getElementById("caseAssignedTo").value;
+        let caseDescription = document.getElementById("caseDescription").value.trim();
+    
+        // ✅ Validate input fields
+        if (!caseId || !caseName || !caseAssignedTo || !caseDescription) {
+            alert("All fields are required!");
+            return;
+        }
+    
+        // ✅ Prepare data for Django backend
+        let caseData = {
+            case_id: caseId,
+            case_name: caseName,
+            assigned_to: caseAssignedTo,
+            description: caseDescription
+        };
+    
+        // ✅ Get CSRF Token (Django security requirement)
+        function getCSRFToken() {
+            let cookieValue = null;
+            let cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.startsWith("csrftoken=")) {
+                    cookieValue = cookie.substring("csrftoken=".length, cookie.length);
+                    break;
+                }
+            }
+            return cookieValue;
+        }
+    
+        // ✅ Send AJAX Request (Fetch API)
+        fetch("/create_case/", {  // Change URL to your Django view endpoint
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken()
+            },
+            body: JSON.stringify(caseData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Case created successfully!");
+                location.reload();  // Refresh to update UI
+            } else {
+                alert("Error: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Something went wrong!");
+        });
+    });
+    </script>
+    
+
+{% endblock %}

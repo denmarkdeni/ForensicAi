@@ -360,7 +360,7 @@ def process_video(video_path):
         return {"message": "No suspicious activity detected"}, 0.0
     
 # Suspicious phrases database (extend as needed)
-SUSPICIOUS_PHRASES = ["help", "gun", "kill", "hide the body", "threaten", "run", "scream","murder","robbery","theft","kidnap","abduction","assault"]
+SUSPICIOUS_PHRASES = ["help", "gun", "kill", "hide the body", "threaten", "run", "scream","murder","robbery","theft","kidnap","abduction","assault","danger"]
 
 # Load AI Models
 whisper_model = whisper.load_model("small")  # Whisper for transcription

@@ -1,0 +1,235 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+      
+      <!-- System Metrics -->
+      <div class="mt-4">
+        <h2>User Management</h2>
+        <div class="card">
+          <div class="chart-container">
+            <canvas id="casesChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Management -->
+      <div class="mt-4" id="manageUser">
+        <h2>Modify User</h2>
+        <div class="card">
+          <div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for user in users %}
+                <tr data-user-id="{{ user.id }}">
+                    <td class="username">{{ user.username }}</td>
+                    <td class="email">{{ user.email }}</td>
+                    <td class="role">{{ user.userinfo.userRole }}</td>
+                    <td>
+                        <button class="btn btn-primary edit-btn">Edit</button>
+                        <button class="btn btn-success save-btn" style="display:none;">Save</button>
+                        <button class="btn btn-danger delete-btn">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+              <tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add User -->
+      <div class="mt-4" id="addUser">
+        <h2>Add User</h2>
+        <div class="card">
+          <div class="add_user">
+            <input type="text" id="username" class="form-control mt-2" placeholder="Username">
+            <input type="email" id="email" class="form-control mt-2" placeholder="Email">          
+          </div>
+          <div class="add_user">
+            <select id="role" class="form-select mt-2">
+              <option value="investigator">Investigator</option>
+              <option value="analyst">Analyst</option>
+              <option value="system_user">System User</option>
+            </select>  
+            <input type="password" id="password" class="form-control mt-2" placeholder="Password">      
+          </div>
+          <button id="addUserBtn" class="btn btn-primary mt-2">Add User</button>
+        </div>
+      </div>
+
+      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    
+  <script>
+
+    // Chart.js Script 
+    const usersCount = {{ users_count }};
+    const investigatorsCount = {{ investigators_count }};
+    const analystsCount = {{ analysts_count }};
+    const systemUserCount = {{ system_user_count }};
+
+    const ctx = document.getElementById('casesChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',  // Changed to Bar Chart
+      data: {
+        labels: ['Total Users','Investigator', 'Analyst', 'System User'],
+        datasets: [{
+          label: 'User Roles',
+          data: [usersCount,investigatorsCount, analystsCount, systemUserCount],
+          backgroundColor: ['#6610f2','#0d6efd', '#6f42c1', '#07244f'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // User Management Script
+    document.addEventListener("DOMContentLoaded", function () {
+        const table = document.querySelector("table");
+    
+        table.addEventListener("click", function (event) {
+            const target = event.target;
+            const row = target.closest("tr");  // Get the parent row
+            const userId = row.dataset.userId; // User ID from the dataset
+    
+            if (target.classList.contains("edit-btn")) {
+                // Enable editing
+                enableEditing(row);
+            } 
+            else if (target.classList.contains("save-btn")) {
+                // Save edited data
+                saveChanges(row, userId);
+            } 
+            else if (target.classList.contains("delete-btn")) {
+                // Delete with confirmation
+                deleteUser(row, userId);
+            }
+        });
+    
+        function enableEditing(row) {
+            row.querySelectorAll("td").forEach((td, index) => {
+                if (index < 3) { // Only edit username, email, and role
+                    let text = td.innerText;
+                    td.innerHTML = `<input type="text" value="${text}" class="form-control">`;
+                }
+            });
+    
+            row.querySelector(".edit-btn").style.display = "none";
+            row.querySelector(".save-btn").style.display = "inline-block";
+        }
+    
+        function saveChanges(row, userId) {
+            const updatedData = {
+                username: row.querySelector(".username input").value,
+                email: row.querySelector(".email input").value,
+                role: row.querySelector(".role input").value
+            };
+
+    
+            fetch(`/update-user/${userId}/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCSRFToken()
+                },
+                body: JSON.stringify(updatedData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    row.querySelector(".username").innerText = updatedData.username;
+                    row.querySelector(".email").innerText = updatedData.email;
+                    row.querySelector(".role").innerText = updatedData.role;
+                    
+                    row.querySelector(".edit-btn").style.display = "inline-block";
+                    row.querySelector(".save-btn").style.display = "none";
+                    alert("User updated successfully!");
+                } else {
+                    alert("Error updating user!");
+                }
+            });
+        }
+    
+        function deleteUser(row, userId) {
+            if (confirm("Are you sure you want to delete this user?")) {
+                fetch(`/delete-user/${userId}/`, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": getCSRFToken()
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        row.remove();
+                        alert("User deleted successfully!");
+                    } else {
+                        alert("Error deleting user!");
+                    }
+                });
+            }
+        }
+    
+    });
+
+    // Add User Script
+    document.getElementById("addUserBtn").addEventListener("click", function () {
+        let username = document.getElementById("username").value;
+        let email = document.getElementById("email").value;
+        let role = document.getElementById("role").value;
+        let password = document.getElementById("password").value;
+    
+        if (!username || !email || !password) {
+            alert("All fields are required!");
+            return;
+        }
+    
+        let csrfToken = getCSRFToken(); // Get CSRF token
+    
+        fetch("/add_user/", {  // Adjust this URL to your Django route
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken
+            },
+            body: JSON.stringify({
+                username: username,
+                email: email,
+                role: role,
+                password: password
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("User added successfully!");
+                location.reload(); // Reload the page to update the user list
+            } else {
+                alert("Error: " + data.error);
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    });
+
+    function getCSRFToken() {
+      return document.querySelector("[name=csrfmiddlewaretoken]").value;
+    }
+    
+    </script>    
+
+{% endblock %}

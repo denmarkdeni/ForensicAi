@@ -1,0 +1,106 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+      
+      <!-- Case Details -->
+      <div class="mt-4">
+        <h2>Case ID: {{ case.case_id }} Details</h2>
+        <div class="card">
+            <table class="table" id="caseDetails">
+                <tbody>
+                    <tr>
+                        <td><h5>Case Name:</h5></td>
+                        <td><input type="text" class="form-control" id="caseName" value="{{ case.title }}"></td>
+                    </tr>
+                    <tr>
+                        <td><h5>Case Description:</h5></td>
+                        <td><textarea class="form-control" id="caseDescription">{{ case.description }}</textarea></td>
+                    </tr>
+                    <tr>
+                        <td><h5>Case Status:</h5></td>
+                        <td>
+                            <select class="form-control" id="caseStatus">
+                                <option value="Open" {% if case.status == "Open" %}selected{% endif %}>Open</option>
+                                <option value="Closed" {% if case.status == "Closed" %}selected{% endif %}>Closed</option>
+                                <option value="In Progress" {% if case.status == "In Progress" %}selected{% endif %}>In Progress</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><h5>Assigned Analyst:</h5></td>
+                        <td>
+                            <select class="form-control" id="caseAnalyst">
+                                {% for analyst in analysts %}
+                                    <option value="{{ analyst.user.id }}" {% if analyst == case.analyst %}selected{% endif %}>{{ analyst.user.username }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><h5>Evidence Submitted:</h5></td>
+                        <td>
+                            {% for evidence in case.evidences.all %} 
+                                <strong>
+                                    <a href="{{ evidence.file.url }}" target="_blank">{{ evidence.file.name }}</a>
+                                </strong><br>
+                            {% empty %}
+                                <strong>No evidence available</strong>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- Save & Delete Buttons -->
+            <button class="btn btn-success mt-2" id="saveChanges">Save Changes</button>
+            <button class="btn btn-danger mt-2" id="deleteCase">Delete Case</button>
+        </div>
+      </div>
+
+
+
+<script>
+    document.getElementById("saveChanges").addEventListener("click", function() {
+        const caseId = "{{ case.id }}";
+        console.log(caseId);
+        const updatedData = {
+            case_name: document.getElementById("caseName").value,
+            description: document.getElementById("caseDescription").value,
+            status: document.getElementById("caseStatus").value,
+            analyst_id: document.getElementById("caseAnalyst").value
+        };
+
+        fetch(`/update-case/${caseId}/`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-CSRFToken": getCSRFToken() },
+            body: JSON.stringify(updatedData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert("Case updated successfully!");
+            location.reload();
+        })
+        .catch(error => console.error("Error:", error));
+    });
+
+    document.getElementById("deleteCase").addEventListener("click", function() {
+        if (confirm("Are you sure you want to delete this case?")) {
+            fetch(`/delete-case/{{ case.id }}/`, {
+                method: "DELETE",
+                headers: { "X-CSRFToken": getCSRFToken() }
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert("Case deleted successfully!");
+                window.location.href = "/dashboard";  // Redirect after deletion
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    });
+
+    // Function to get CSRF token
+    function getCSRFToken() {
+        return document.cookie.split('; ').find(row => row.startsWith("csrftoken="))?.split('=')[1];
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+      
+      <!-- System Metrics -->
+      <div class="mt-4">
+        <h2>System Overview</h2>
+        <div class="card">
+          <div class="chart-container">
+            <canvas id="casesChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Management -->
+      <div class="mt-4">
+        <h2>User Management</h2>
+        <div class="card">
+          <h3>User Actions</h3>
+          <div>
+            <a href="/admin_user_manage#addUser" class="btn btn-primary">Add User</a>
+            <a href="/admin_user_manage#manageUser" class="btn btn-secondary">Manage Users</a>
+            <a href="/admin_user_manage#manageUser" class="btn btn-warning">Manage Roles</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Case Management -->
+      <div class="mt-4">
+        <h2>Case Management</h2>
+        <div class="card">
+          <h3>Case Actions</h3>
+          <div>
+            <a href="/admin_case_manage#CreateCase" class="btn btn-success">Create Case</a>
+            <a href="/admin_case_manage#CaseList" class="btn btn-info">Case List</a>
+            <a href="/admin_case_manage#CaseList" class="btn btn-danger">Case Details</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Evidence Management -->
+      <div class="mt-4">
+        <h2>Evidence Management</h2>
+        <div class="card">
+          <h3>Evidence Actions</h3>
+          <div>
+            <a href="/evidence/upload" class="btn btn-dark">Upload Evidence</a>
+            <a href="/evidence" class="btn btn-danger">Evidence List</a>
+            <a href="/evidence-review" class="btn btn-secondary">Review Evidence</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ai Analysis -->
+      <div class="mt-4">
+        <h2>Ai Analysis</h2>
+        <div class="card">
+          <h3>Analysis Actions</h3>
+          <div>
+            <a href="/ai-dashboard" class="btn btn-dark">Ai Analysis</a>
+            {% comment %} <a href="/evidence" class="btn btn-danger">Evidence List</a>
+            <a href="/evidence-review" class="btn btn-secondary">Review Evidence</a> {% endcomment %}
+          </div>
+        </div>
+      </div>
+
+      <!-- System Logs -->
+      <div class="mt-4">
+        <h2>System Logs</h2>
+        <div class="card">
+          <h3>Recent Activity</h3>
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr>
+                <th>Time</th>
+                <th>Action</th>
+                <th>User</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2025-02-24 10:00</td>
+                <td>Login</td>
+                <td>John</td>
+                <td>User "John" logged in.</td>
+              </tr>
+              <tr>
+                <td>2025-02-24 10:30</td>
+                <td>Case Upload</td>
+                <td>Admin</td>
+                <td>Case "C1234" uploaded.</td>
+              </tr>
+              <tr>
+                <td>2025-02-24 11:00</td>
+                <td>Evidence Upload</td>
+                <td>Jane</td>
+                <td>New evidence uploaded for case "C1234".</td>
+              </tr>
+              <tr>
+                <td>2025-02-24 11:30</td>
+                <td>Login</td>
+                <td>Jane</td>
+                <td>User "Jane" logged in.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    
+
+  <!-- Chart.js Script -->
+  <script>
+
+    const usersCount = {{ users_count }};
+    const CasesCount = {{ cases_count }};
+    const PendingCases = {{ pending_cases }};
+    const SolvedCases = {{ solved_cases }};
+
+    const ctx = document.getElementById('casesChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',  // Changed to Bar Chart
+      data: {
+        labels: ['Active Users', 'Total Cases', 'Pending Cases', 'Solved Cases'],
+        datasets: [{
+          label: 'System Metrics',
+          data: [usersCount, CasesCount, PendingCases, SolvedCases],
+          backgroundColor: ['#3498db', '#e74c3c', '#f1c40f', '#2ecc71'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+  </script>
+
+{% endblock %}

@@ -83,20 +83,40 @@
     .dark-mode .sidebar a:hover {
       background-color: #2c3e50;
     }
+    .dark-mode td ,.dark-mode th {
+      background-color: #333;
+      color: white;
+    }
     .chart-container {
       position: relative;
       height: 300px;
     }
+    tr th {
+      font-size: 20px;
+    }
+    .add_user{
+      display: flex;
+      gap: 10px;
+    }
+    strong{
+      font-size: 20px;
+    }
+    #caseDetails th:first-child,
+    #caseDetails td:first-child {
+      width: 250px; 
+      white-space: nowrap; 
+    }
+
   </style>
 </head>
 <body>
 
   <!-- Sidebar -->
   <div class="sidebar">
-    <h2 style="color: white; text-align: center;">Forensic Admin</h2>
-    <a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-    <a href="#"><i class="fas fa-users"></i> User Management</a>
-    <a href="#"><i class="fas fa-briefcase"></i> Case Management</a>
+    <h2 style="color: white; text-align: center;">Forensic Ai</h2>
+    <a href="/admin_dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    <a href="/admin_user_manage"><i class="fas fa-users"></i> User Management</a>
+    <a href="/admin_case_manage"><i class="fas fa-briefcase"></i> Case Management</a>
     <a href="#"><i class="fas fa-file-alt"></i> Evidence Management</a>
     <a href="#"><i class="fas fa-history"></i> System Logs</a>
   </div>
@@ -113,145 +133,19 @@
     </div>
 
     <div class="sub-container">
-
-      <!-- System Metrics -->
-      <div class="mt-4">
-        <h2>System Metrics</h2>
-        <div class="card">
-          <h3>System Overview</h3>
-          <div class="chart-container">
-            <canvas id="casesChart"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- User Management -->
-      <div class="mt-4">
-        <h2>User Management</h2>
-        <div class="card">
-          <h3>User Actions</h3>
-          <div>
-            <a href="#" class="btn btn-primary">Add User</a>
-            <a href="#" class="btn btn-secondary">Manage Users</a>
-            <a href="#" class="btn btn-warning">Manage Roles</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Case Management -->
-      <div class="mt-4">
-        <h2>Case Management</h2>
-        <div class="card">
-          <h3>Case Actions</h3>
-          <div>
-            <a href="/dashboard/create-case" class="btn btn-success">Create Case</a>
-            <a href="/dashboard/case_list" class="btn btn-info">Case List</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Evidence Management -->
-      <div class="mt-4">
-        <h2>Evidence Management</h2>
-        <div class="card">
-          <h3>Evidence Actions</h3>
-          <div>
-            <a href="/evidence/upload" class="btn btn-dark">Upload Evidence</a>
-            <a href="/evidence" class="btn btn-danger">Evidence List</a>
-            <a href="/evidence-review" class="btn btn-secondary">Review Evidence</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Ai Analysis -->
-      <div class="mt-4">
-        <h2>Ai Analysis</h2>
-        <div class="card">
-          <h3>Analysis Actions</h3>
-          <div>
-            <a href="/ai-dashboard" class="btn btn-dark">Ai Analysis</a>
-            {% comment %} <a href="/evidence" class="btn btn-danger">Evidence List</a>
-            <a href="/evidence-review" class="btn btn-secondary">Review Evidence</a> {% endcomment %}
-          </div>
-        </div>
-      </div>
-
-      <!-- System Logs -->
-      <div class="mt-4">
-        <h2>System Logs</h2>
-        <div class="card">
-          <h3>Recent Activity</h3>
-          <table class="table table-bordered">
-            <thead class="table-light">
-              <tr>
-                <th>Time</th>
-                <th>Action</th>
-                <th>User</th>
-                <th>Details</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>2025-02-24 10:00</td>
-                <td>Login</td>
-                <td>John</td>
-                <td>User "John" logged in.</td>
-              </tr>
-              <tr>
-                <td>2025-02-24 10:30</td>
-                <td>Case Upload</td>
-                <td>Admin</td>
-                <td>Case "C1234" uploaded.</td>
-              </tr>
-              <tr>
-                <td>2025-02-24 11:00</td>
-                <td>Evidence Upload</td>
-                <td>Jane</td>
-                <td>New evidence uploaded for case "C1234".</td>
-              </tr>
-              <tr>
-                <td>2025-02-24 11:30</td>
-                <td>Login</td>
-                <td>Jane</td>
-                <td>User "Jane" logged in.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      
+        {% block content %}
+        <!-- This block will be replaced by child templates -->
+        {% endblock %}
     </div>
   </div>
 
-  <!-- Chart.js Script -->
   <script>
-    const ctx = document.getElementById('casesChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'bar',  // Changed to Bar Chart
-      data: {
-        labels: ['Active Users', 'Total Cases', 'Pending Cases', 'Solved Cases'],
-        datasets: [{
-          label: 'System Metrics',
-          data: [125, 75, 20, 55],
-          backgroundColor: ['#3498db', '#e74c3c', '#f1c40f', '#2ecc71'],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
-    });
 
     // Dark Mode Toggle
     document.getElementById('darkModeToggle').addEventListener('click', function () {
       document.body.classList.toggle('dark-mode');   
     });
+
   </script>
 
 </body>

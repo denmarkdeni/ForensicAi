@@ -49,48 +49,143 @@ def Login(request):
         if user is not None:
             login(request, user)
             messages.success(request, 'Signed In successfully!')
-            return redirect('dashboard')
+            return redirect('admin_dashboard')
             
         else:
             messages.error(request, 'Invalid username or password')
     return render(request,'signin.html')
 
-def dashboard(request):
-    return render(request, 'admin_base.html')
+def admin_dashboard(request):
+    users_count = UserInfo.objects.all().count()
+    cases_count = Case.objects.all().count()
+    pending_cases = Case.objects.filter(status='In Progress').count()
+    solved_cases = Case.objects.filter(status='Closed').count()
+    return render(request, 'admin_dashboard.html', {'users_count': users_count, 'cases_count': cases_count, 'pending_cases': pending_cases, 'solved_cases': solved_cases})
+
+def admin_user_manage(request):
+    users = User.objects.filter(is_superuser=False)
+    users_count = UserInfo.objects.all().count()
+    investigators_count = UserInfo.objects.filter(userRole='investigator').count()
+    analysts_count = UserInfo.objects.filter(userRole='analyst').count()
+    system_user_count = UserInfo.objects.filter(userRole='system_user').count()
+    return render(request, 'admin_user_manage.html', {'users': users, 'users_count': users_count, 'investigators_count': investigators_count, 'analysts_count': analysts_count, 'system_user_count': system_user_count})
+
+def admin_case_manage(request):
+    cases = Case.objects.all()
+    investigators = UserInfo.objects.filter(userRole='investigator')
+    total_cases = Case.objects.all().count()
+    open_cases = Case.objects.filter(status='Open').count()
+    in_progress_cases = Case.objects.filter(status='In Progress').count()
+    closed_cases = Case.objects.filter(status='Closed').count()
+    return render(request, 'admin_case_manage.html', {'cases': cases, 'investigators': investigators, 'total_cases': total_cases, 'open_cases': open_cases, 'in_progress_cases': in_progress_cases, 'closed_cases': closed_cases})
 
 def Logout(request):
     logout(request)
     messages.success(request, 'Logged Out successfully!')
     return redirect('login')
 
-def create_case(request):
-    if request.method == 'POST':
-        # Extract data from the form
-        case_id = request.POST.get('case_id')
-        title = request.POST.get('title')
-        description = request.POST.get('description')
-        assigned_to_id = request.POST.get('assigned_to')
+def add_user(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            username = data.get("username")
+            email = data.get("email")
+            role = data.get("role")
+            password = data.get("password")
 
-        if case_id and title and description and assigned_to_id:
-            assigned_to = User.objects.get(id=assigned_to_id)
-            case = Case(
-                case_id=case_id,
-                title=title,
-                description=description,
-                created_by=request.user, 
-                investigator=assigned_to
+            if User.objects.filter(username=username).exists():
+                return JsonResponse({"success": False, "error": "Username already exists."}, status=400)
+
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password
             )
-            case.save()
-            return redirect('case_list')  
-        else:
-            return render(request, 'create_case.html', {'error': 'Please fill out all fields.'})
-    
-    users = User.objects.all()
-    return render(request, 'create_case.html', {'users': users})
+            
+            UserInfo.objects.create(user=user, userRole=role)
 
-def case_list(request):
-    cases = Case.objects.all()
-    return render(request, 'case_list.html',{'cases':cases})
+            return JsonResponse({"success": True})
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)}, status=500)
+
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+
+def update_user(request, user_id):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        try:
+            user = User.objects.get(id=user_id)
+            user.username = data["username"]
+            user.email = data["email"]
+            user.userinfo.userRole = data["role"]
+            user.save()
+            return JsonResponse({"success": True})
+        except User.DoesNotExist:
+            return JsonResponse({"success": False, "error": "User not found"})
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)}, status=500)
+        
+def delete_user(request, user_id):
+    if request.method == "POST":
+        try:
+            user = User.objects.get(id=user_id)
+            user.delete()
+            return JsonResponse({"success": True})
+        except User.DoesNotExist:
+            return JsonResponse({"success": False, "error": "User not found"})
+
+def create_case(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            case_id = data.get("case_id")
+            case_name = data.get("case_name")
+            assigned_to_id = data.get("assigned_to")
+            description = data.get("description")
+
+            if not (case_id and case_name and assigned_to_id and description):
+                return JsonResponse({"success": False, "message": "All fields are required!"}, status=400)
+
+            assigned_to = User.objects.get(id=assigned_to_id)  # Fetch investigator
+            new_case = Case(case_id=case_id, title=case_name, investigator=assigned_to, description=description, created_by=request.user)
+            new_case.save()
+
+            return JsonResponse({"success": True, "message": "Case created successfully!"})
+        except Exception as e:
+            return JsonResponse({"success": False, "message": str(e)}, status=500)
+    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
+
+def view_case_details(request, case_id):
+    case = Case.objects.get(case_id=case_id)
+    analysts = UserInfo.objects.filter(userRole='analyst')
+    return render(request, 'case_details.html', {'case': case, 'analysts': analysts})
+
+def update_case(request, case_id):
+    if request.method == "POST":
+        try:
+            case = Case.objects.get(id=case_id)
+            data = json.loads(request.body)
+
+            case.title = data.get("case_name", case.title)
+            case.description = data.get("description", case.description)
+            case.status = data.get("status", case.status)
+            case.analyst = data.get("analyst_id", case.analyst)
+
+            case.save()
+            return JsonResponse({"success": True, "message": "Case updated successfully!"})
+        except Case.DoesNotExist:
+            return JsonResponse({"success": False, "message": "Case not found"}, status=404)
+    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
+
+def delete_case(request, case_id):
+    if request.method == "DELETE":
+        try:
+            case = Case.objects.get(id=case_id)
+            case.delete()
+            return JsonResponse({"success": True, "message": "Case deleted successfully!"})
+        except Case.DoesNotExist:
+            return JsonResponse({"success": False, "message": "Case not found"}, status=404)
+    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
 
 @login_required
 def evidence_list(request):

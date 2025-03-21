@@ -25,10 +25,21 @@ urlpatterns = [
     path('',views.index,name='index'),
     path('register/',views.register,name='register'),
     path('login/',views.Login,name='login'),
-    path('dashboard/',views.dashboard,name='dashboard'),
     path('logout/',views.Logout,name='logout'),
-    path('dashboard/create-case/',views.create_case,name='create_case'),
-    path('dashboard/case_list/',views.case_list,name='case_list'),
+
+    path('admin_dashboard/',views.admin_dashboard,name='admin_dashboard'),
+    path('admin_user_manage/',views.admin_user_manage,name='admin_user_manage'),
+    path('admin_case_manage/',views.admin_case_manage,name='admin_case_manage'),
+
+    path("add_user/", views.add_user, name="add_user"),
+    path("update-user/<int:user_id>/", views.update_user, name="update-user"),
+    path("delete-user/<int:user_id>/", views.delete_user, name="delete-user"),
+
+    path('create_case/',views.create_case,name='create_case'),
+    path('view_case_details/<str:case_id>/',views.view_case_details,name='view_case_details'),
+    path("update-case/<int:case_id>/", views.update_case, name="update_case"),
+    path("delete-case/<int:case_id>/", views.delete_case, name="delete_case"),
+
     path('evidence/', views.evidence_list, name='evidence_list'),
     path('evidence/upload/', views.upload_evidence, name='upload_evidence'),
     path('update-evidence/<int:evidence_id>/', views.update_evidence, name='update_evidence'),
