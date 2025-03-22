@@ -30,6 +30,9 @@ urlpatterns = [
     path('admin_dashboard/',views.admin_dashboard,name='admin_dashboard'),
     path('admin_user_manage/',views.admin_user_manage,name='admin_user_manage'),
     path('admin_case_manage/',views.admin_case_manage,name='admin_case_manage'),
+    path('admin_evidence_manage/',views.admin_evidence_manage,name='admin_evidence_manage'),
+    path('admin_ai_manage/',views.admin_ai_manage,name='admin_ai_manage'),
+    path('admin_report_manage/',views.admin_report_manage,name='admin_report_manage'),
 
     path("add_user/", views.add_user, name="add_user"),
     path("update-user/<int:user_id>/", views.update_user, name="update-user"),
@@ -37,12 +40,16 @@ urlpatterns = [
 
     path('create_case/',views.create_case,name='create_case'),
     path('view_case_details/<str:case_id>/',views.view_case_details,name='view_case_details'),
-    path("update-case/<int:case_id>/", views.update_case, name="update_case"),
-    path("delete-case/<int:case_id>/", views.delete_case, name="delete_case"),
+    path("update-case/<str:case_id>/", views.update_case, name="update_case"),
+    path("delete-case/<str:case_id>/", views.delete_case, name="delete_case"),
 
-    path('evidence/', views.evidence_list, name='evidence_list'),
-    path('evidence/upload/', views.upload_evidence, name='upload_evidence'),
-    path('update-evidence/<int:evidence_id>/', views.update_evidence, name='update_evidence'),
+    path("upload-evidence/", views.upload_evidence, name="upload_evidence"),
+    path("view_evidence_details/<int:evidence_id>/", views.view_evidence_details, name="view_evidence_details"),
+    path("update-evidence/<int:evidence_id>/", views.update_evidence, name="update_evidence"),
+    path("delete-evidence/<int:evidence_id>/", views.delete_evidence, name="delete_evidence"),
+
+    path("generate_case_report_view/<str:case_id>/", views.generate_case_report_view, name="generate_case_report_view"),
+
     path('evidence-review/', views.evidence_review, name='evidence_review'),
     path('live/', views.live_emotion, name='live_emotion'),
     path('detect_emotion/', views.detect_emotion, name='detect_emotion'),

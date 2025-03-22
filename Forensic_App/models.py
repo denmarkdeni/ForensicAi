@@ -118,3 +118,4 @@ class Message(models.Model):
 
     def __str__(self):
         return f"Message from {self.sender.username} to {self.receiver.username} on Case {self.case.case_id}"
+

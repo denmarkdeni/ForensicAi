@@ -16,18 +16,20 @@
       <div class="mt-4" id="CreateCase">
         <h2>Create Case</h2>
         <div class="card">
-            <div class="add_user">
-                <input type="text" id="caseId" class="form-control" placeholder="Case ID" required>
-                <input type="text" id="caseName" class="form-control" placeholder="Case Name" required>     
-                <select id="caseAssignedTo" class="form-control" >
-                    <option value="">Select an Investigator</option>
-                    {% for user in investigators %}
-                        <option value="{{ user.user.id }}">{{ user.user.username }}</option>
-                    {% endfor %}
-                </select>   
+            <div>
+                <div class="add_user">
+                    <input type="text" id="caseId" class="form-control" placeholder="Case ID" required>
+                    <input type="text" id="caseName" class="form-control" placeholder="Case Name" required>     
+                    <select id="caseAssignedTo" class="form-control" >
+                        <option value="">Select an Investigator</option>
+                        {% for user in investigators %}
+                            <option value="{{ user.user.id }}">{{ user.user.username }}</option>
+                        {% endfor %}
+                    </select>   
+                </div>
+                <textarea id="caseDescription" class="form-control mt-2" placeholder="Case Description" rows=3 required></textarea>
+                <button id="createCase" class="btn btn-primary mt-2">Create Case</button>
             </div>
-            <textarea id="caseDescription" class="form-control mt-2" placeholder="Case Description" rows=3 required></textarea>
-            <button id="createCase" class="btn btn-primary mt-2">Create Case</button>
         </div>
       </div>
 

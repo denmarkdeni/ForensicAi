@@ -1,4 +1,4 @@
-{% extends 'base_evidence.html' %}
+{% extends 'ai_base.html' %}
 
 {% block content %}
 
@@ -7,6 +7,7 @@
     <table>
         <thead>
             <tr>
+                <th>Case ID</th>
                 <th>Case Title</th>
                 <th>Case Description</th>
                 <th>Case Status</th>
@@ -14,15 +15,28 @@
             </tr>
         </thead>
         <tbody>
-            {% for case in cases %}
-            <tr>
-                <td>{{ case.title }}</td>
-                <td>{{ case.description }}</td>
-                <td>{{ case.status }}</td>
-                <td><a href="{% url 'case_evidences' case.case_id %}"><button>View Evidence</button></a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
+            {% if cases %}
+                {% for case in cases %}
+                <tr>
+                    <td>{{ case.case_id }}</td>
+                    <td>{{ case.title }}</td>
+                    <td>{{ case.description }}</td>
+                    <td>{{ case.status }}</td>
+                    <td>
+                        <a href="{% url 'case_evidences' case.case_id %}">
+                            <button class="btn btn-primary btn-sm">
+                                <i class="fas fa-folder-open"></i> View Evidence
+                            </button>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center text-danger">No cases found</td>
+                </tr>
+            {% endif %}
+        </tbody>        
     </table>
 </div>
 

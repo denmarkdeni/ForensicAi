@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ForensicAI</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/styles.css">
+
+</head>
+<body>
+    <header>
+        <h1>Forensic AI System</h1>
+        <nav>
+            {% comment %} <a href="{% url 'evidence_list' %}">Evidence List</a> |
+            <a href="{% url 'upload_evidence' %}">Upload Evidence</a> |
+            <a href="{% url 'evidence_review' %}">Review Evidence</a> | {% endcomment %}
+            <a href="{% url 'admin_dashboard' %}">Go Back</a> 
+        </nav>
+    </header>
+    
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>© 2025 ForensicAI. All rights reserved.</p>
+    </footer>
+</body>
+</html>

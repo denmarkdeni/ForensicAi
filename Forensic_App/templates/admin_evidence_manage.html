@@ -1,0 +1,150 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+      
+      <!-- System Metrics -->
+      <div class="mt-4">
+        <h2>Evidence Management</h2>
+        <div class="card">
+          <div class="chart-container">
+            <canvas id="casesChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Evidence -->
+      <div class="mt-4" id="addEvidence">
+        <h2>Add Evidence</h2>
+        <div class="card">
+            <div>
+                <div class="add_user">
+                    <select id="case_id" class="form-control mt-2" required>
+                      {% for case in cases %}
+                        <option value="{{ case.case_id }}">{{ case.case_id }} - {{ case.title }}</option>
+                      {% endfor %}
+                    </select>
+                    <select id="evidence_type" class="form-control mt-2" required>
+                        <option value="image">Image</option>
+                        <option value="audio">Audio</option>
+                        <option value="video">Video</option>
+                        <option value="document">Document</option>
+                    </select>
+                    <input type="file" id="evidence" class="form-control mt-2" placeholder="Evidence" required>
+                </div>
+                <textarea type="text" id="description" class="form-control mt-2" placeholder="Description" rows=3 required></textarea>
+                <button id="uploadEvidence" class="btn btn-primary mt-2">Upload Evidence</button>
+            </div> 
+        </div>
+      </div>
+
+      <!-- Evidence List -->
+      <div class="mt-4" id="evidenceList">
+        <h2>Evidence List</h2>
+        <div class="card">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Case ID</th>
+                        <th>Case Name</th>
+                        <th>Evidence</th>
+                        <th>File Type</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for evidence in evidences %}
+                    <tr data-case-id="{{ evidence.id }}">
+                        <td>{{ evidence.case.case_id }}</td>
+                        <td>{{ evidence.case.title }}</td>
+                        <td><a href="{{ evidence.file.url }}" target="_blank">Click to View</a></td>
+                        <td>{{ evidence.file_type }}</td>
+                        <td>{{ evidence.status }}</td>
+                        <td>
+                            <a href="/view_evidence_details/{{ evidence.id }}" class="btn btn-primary">More Details</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+      </div>
+    
+  <script>
+
+    const total_evidences = {{ total_evidences }};
+    const reviewed_evidences = {{ reviewed_evidences }};
+    const pending_evidences = {{ pending_evidences }};
+
+    const ctx = document.getElementById('casesChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',  
+      data: {
+        labels: ['Uploaded Evidences', 'Analysed Evidences', 'Pending Evidences'],
+        datasets: [{
+          label: 'System Metrics',
+          data: [total_evidences, reviewed_evidences, pending_evidences],
+          backgroundColor: ['#5b0f16', '#c72938', '#ff0018'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    document.getElementById("uploadEvidence").addEventListener("click", function() {
+        let caseId = document.getElementById("case_id").value;
+        let evidenceType = document.getElementById("evidence_type").value;
+        let evidenceFile = document.getElementById("evidence").files[0];  // Get file
+        let description = document.getElementById("description").value;
+    
+        if (!caseId || !evidenceFile || !description) {
+            alert("Please fill in all required fields.");
+            return;
+        }
+    
+        let formData = new FormData();
+        formData.append("case_id", caseId);
+        formData.append("evidence_type", evidenceType);
+        formData.append("evidence", evidenceFile);
+        formData.append("description", description);
+        console.log(evidenceFile);
+        fetch("/upload-evidence/", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRFToken": getCSRFToken() 
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Evidence uploaded successfully!");
+                location.reload();  
+            } else {
+                alert("Error uploading evidence.");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Something went wrong!");
+        });
+    });
+    
+    // Function to get CSRF token
+    function getCSRFToken() {
+        return document.cookie.split("; ")
+            .find(row => row.startsWith("csrftoken="))
+            ?.split("=")[1];
+    }
+    </script>
+    
+
+{% endblock %}

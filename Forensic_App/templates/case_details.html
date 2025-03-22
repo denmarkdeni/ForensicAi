@@ -5,6 +5,7 @@
       <!-- Case Details -->
       <div class="mt-4">
         <h2>Case ID: {{ case.case_id }} Details</h2>
+        <button class="custom-back-btn" onclick="window.history.back();">◀ Back ▶</button>
         <div class="card">
             <table class="table" id="caseDetails">
                 <tbody>
@@ -27,11 +28,23 @@
                         </td>
                     </tr>
                     <tr>
+                        <td><h5>Assigned Investigator:</h5></td>
+                        <td>
+                            <select class="form-control" id="caseInvestigator">
+                                <option value="">Select Investigator</option>
+                                {% for investigator in investigators %}
+                                    <option value="{{ investigator.user.id }}" {% if investigator.user == case.investigator %}selected{% endif %}>{{ investigator.user.username }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
                         <td><h5>Assigned Analyst:</h5></td>
                         <td>
                             <select class="form-control" id="caseAnalyst">
+                                <option value="">Select Analyst</option>
                                 {% for analyst in analysts %}
-                                    <option value="{{ analyst.user.id }}" {% if analyst == case.analyst %}selected{% endif %}>{{ analyst.user.username }}</option>
+                                    <option value="{{ analyst.user.id }}" {% if analyst.user == case.analyst %}selected{% endif %}>{{ analyst.user.username }}</option>
                                 {% endfor %}
                             </select>
                         </td>
@@ -48,24 +61,40 @@
                             {% endfor %}
                         </td>
                     </tr>
+                    <tr>
+                        <td><h5>Case Created At:</h5></td>
+                        <td>{{ case.created_at }}</td>
+                    </tr>
+                    <tr>
+                        <td><h5>Case Updated At:</h5></td>
+                        <td>{{ case.updated_at }}</td>
+                    </tr>
+                    <tr>
+                        <td><h5>Case Created By:</h5></td>
+                        <td>{{ case.created_by }}</td>
                 </tbody>
             </table>
             <!-- Save & Delete Buttons -->
-            <button class="btn btn-success mt-2" id="saveChanges">Save Changes</button>
-            <button class="btn btn-danger mt-2" id="deleteCase">Delete Case</button>
+            <div class="save-delete">
+                <button class="btn btn-success mt-2" id="saveChanges">Save Changes</button>
+                <button class="btn btn-danger mt-2" id="deleteCase">Delete Case</button>
+            </div>
         </div>
       </div>
 
 
 
 <script>
+        
+    const caseId = "{{ case.case_id }}";
+
     document.getElementById("saveChanges").addEventListener("click", function() {
-        const caseId = "{{ case.id }}";
-        console.log(caseId);
+        
         const updatedData = {
             case_name: document.getElementById("caseName").value,
             description: document.getElementById("caseDescription").value,
             status: document.getElementById("caseStatus").value,
+            investigator_id: document.getElementById("caseInvestigator").value,
             analyst_id: document.getElementById("caseAnalyst").value
         };
 
@@ -84,14 +113,14 @@
 
     document.getElementById("deleteCase").addEventListener("click", function() {
         if (confirm("Are you sure you want to delete this case?")) {
-            fetch(`/delete-case/{{ case.id }}/`, {
+            fetch(`/delete-case/${caseId}/`, {
                 method: "DELETE",
                 headers: { "X-CSRFToken": getCSRFToken() }
             })
             .then(response => response.json())
             .then(data => {
                 alert("Case deleted successfully!");
-                window.location.href = "/dashboard";  // Redirect after deletion
+                window.location.href = "/admin_case_manage#CaseList";  // Redirect after deletion
             })
             .catch(error => console.error("Error:", error));
         }

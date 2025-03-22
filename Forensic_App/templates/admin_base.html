@@ -98,15 +98,30 @@
       display: flex;
       gap: 10px;
     }
-    strong{
-      font-size: 20px;
-    }
     #caseDetails th:first-child,
     #caseDetails td:first-child {
       width: 250px; 
       white-space: nowrap; 
     }
-
+    .save-delete {
+      display: flex;
+      gap: 20px;
+    }
+    .custom-back-btn {
+      position: absolute;
+      top: 110px;
+      right: 20px;
+      background-color: #ff5733; /* Change to any color */
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  
+    .custom-back-btn:hover {
+      background-color: #d63c12; /* Darker shade on hover */
+    }
   </style>
 </head>
 <body>
@@ -114,11 +129,12 @@
   <!-- Sidebar -->
   <div class="sidebar">
     <h2 style="color: white; text-align: center;">Forensic Ai</h2>
-    <a href="/admin_dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    <a href="/admin_dashboard"><i class="fas fa-home"></i> Dashboard</a>
     <a href="/admin_user_manage"><i class="fas fa-users"></i> User Management</a>
     <a href="/admin_case_manage"><i class="fas fa-briefcase"></i> Case Management</a>
-    <a href="#"><i class="fas fa-file-alt"></i> Evidence Management</a>
-    <a href="#"><i class="fas fa-history"></i> System Logs</a>
+    <a href="/admin_evidence_manage"><i class="fas fa-file-alt"></i> Evidence Management</a>
+    <a href="/admin_ai_manage"><i class="fas fa-cog"></i> AI Analysis</a>
+    <a href="/admin_report_manage"><i class="fas fa-chart-bar"></i> Reports</a>
   </div>
 
   <!-- Content -->

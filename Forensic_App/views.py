@@ -79,6 +79,21 @@ def admin_case_manage(request):
     closed_cases = Case.objects.filter(status='Closed').count()
     return render(request, 'admin_case_manage.html', {'cases': cases, 'investigators': investigators, 'total_cases': total_cases, 'open_cases': open_cases, 'in_progress_cases': in_progress_cases, 'closed_cases': closed_cases})
 
+def admin_evidence_manage(request):
+    cases = Case.objects.all()
+    evidences = Evidence.objects.all()
+    total_evidences = Evidence.objects.all().count()
+    pending_evidences = Evidence.objects.filter(status='pending').count()
+    reviewed_evidences = Evidence.objects.filter(status='reviewed').count()
+    return render(request, 'admin_evidence_manage.html', {'evidences': evidences, 'total_evidences': total_evidences, 'pending_evidences': pending_evidences, 'reviewed_evidences': reviewed_evidences, 'cases': cases})
+
+def admin_ai_manage(request):
+    ai_analyses = AIAnalysis.objects.all()
+    return render(request, 'admin_ai_manage.html', {'ai_analyses': ai_analyses})
+
+def admin_report_manage(request):
+    return render(request, 'admin_report_manage.html')
+
 def Logout(request):
     logout(request)
     messages.success(request, 'Logged Out successfully!')
@@ -158,18 +173,30 @@ def create_case(request):
 def view_case_details(request, case_id):
     case = Case.objects.get(case_id=case_id)
     analysts = UserInfo.objects.filter(userRole='analyst')
-    return render(request, 'case_details.html', {'case': case, 'analysts': analysts})
+    investigators = UserInfo.objects.filter(userRole='investigator')
+    return render(request, 'case_details.html', {'case': case, 'analysts': analysts, 'investigators': investigators})
 
 def update_case(request, case_id):
     if request.method == "POST":
         try:
-            case = Case.objects.get(id=case_id)
+            case = Case.objects.get(case_id=case_id)
             data = json.loads(request.body)
 
             case.title = data.get("case_name", case.title)
             case.description = data.get("description", case.description)
             case.status = data.get("status", case.status)
-            case.analyst = data.get("analyst_id", case.analyst)
+
+            investigator_id = data.get("investigator_id")
+            if investigator_id:
+                case.investigator = User.objects.get(id=investigator_id)
+            else:
+                case.investigator = None
+
+            analyst_id = data.get("analyst_id")
+            if analyst_id:
+                case.analyst = User.objects.get(id=analyst_id)
+            else:
+                case.analyst = None 
 
             case.save()
             return JsonResponse({"success": True, "message": "Case updated successfully!"})
@@ -180,48 +207,62 @@ def update_case(request, case_id):
 def delete_case(request, case_id):
     if request.method == "DELETE":
         try:
-            case = Case.objects.get(id=case_id)
+            case = Case.objects.get(case_id=case_id)
             case.delete()
             return JsonResponse({"success": True, "message": "Case deleted successfully!"})
         except Case.DoesNotExist:
             return JsonResponse({"success": False, "message": "Case not found"}, status=404)
     return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
 
-@login_required
-def evidence_list(request):
-    evidence_items = Evidence.objects.all()
-    return render(request, 'evidence_list.html', {'evidence_items': evidence_items})
-
-@login_required
 def upload_evidence(request):
     if request.method == "POST":
         case_id = request.POST.get("case_id")
         evidence_type = request.POST.get("evidence_type")
-        location = request.POST.get("location")
-        tags = request.POST.get("tags")
-        file = request.FILES["file"]
+        description = request.POST.get("description")
+        evidence_file = request.FILES.get("evidence")
 
-        # Save file manually
-        # fs = FileSystemStorage()
-        # filename = fs.save(f"evidence/{file.name}", file)
-        # file_url = fs.url(filename)
+        if not case_id or not evidence_file:
+            return JsonResponse({"success": False, "error": "Missing required fields."})
 
-        case = Case.objects.get(case_id=case_id)
+        case = get_object_or_404(Case, case_id=case_id)
 
-        evidence = Evidence.objects.create(
+        # Save the evidence
+        Evidence.objects.create(
             case=case,
-            uploaded_by=request.user,
-            file=file,
+            file=evidence_file,
             file_type=evidence_type,
-            description=tags
+            description=description,
+            uploaded_by=request.user
         )
-        case.status = "In Progress"
-        case.save()
-        return redirect("evidence_list")
 
-    cases = Case.objects.all()
-    return render(request, "upload_evidence.html", {"cases": cases})
+        return JsonResponse({"success": True})
 
+    return JsonResponse({"success": False, "error": "Invalid request."})
+
+def update_evidence(request, evidence_id):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            evidence = get_object_or_404(Evidence, id=evidence_id)
+            evidence.status = data.get("status", evidence.status)
+            evidence.save()
+            return JsonResponse({"success": True})
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)})
+
+def delete_evidence(request, evidence_id):
+    if request.method == "DELETE":
+        try:
+            evidence = get_object_or_404(Evidence, id=evidence_id)
+            evidence.delete()
+            return JsonResponse({"success": True})
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)})
+
+def view_evidence_details(request, evidence_id):
+    evidence = get_object_or_404(Evidence, id=evidence_id)
+    return render(request, "evidence_details.html", {"evidence": evidence})
+#-----------------------------------------------------------------------------------------------------------------
 def evidence_review(request):
     evidences = Evidence.objects.all()
     return render(request, 'evidence_review.html', {'evidences': evidences})
@@ -265,13 +306,14 @@ def detect_emotion(request):
 def ai_analysis_dashboard(request):
     """Shows all cases with 'View Evidence' buttons."""
     cases = Case.objects.all()
+    print(cases)
     return render(request, "ai_analysis_dashboard.html", {"cases": cases})
 
 def case_evidences(request, case_id):
     """Shows all evidence for a specific case with 'Analyze' buttons."""
     case = get_object_or_404(Case, case_id=case_id)
     evidences = case.evidences.all()  # Fetch all related evidence
-    return render(request, "case_evidences.html", {"case": case, "evidences": evidences})
+    return render(request, "ai_analysis_evidences.html", {"case": case, "evidences": evidences})
 
 def analyze_evidence(request, evidence_id):
     """Perform AI analysis based on file type (image, video, audio, doc)."""
@@ -303,5 +345,68 @@ def analyze_evidence(request, evidence_id):
 
     return render(request, "ai_analysis_results.html", {"evidence": evidence, "ai_analysis": ai_analysis})
 
+# ------------------------------------->>>> 📌 Case Analysis Report
+
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from django.http import FileResponse
+
+def get_case_analysis(case_id):
+    # Fetch case details
+    case = Case.objects.get(case_id=case_id)
+    
+    # Fetch all evidences related to the case
+    evidences = Evidence.objects.filter(case_id=case_id)
+
+    # Fetch all AI analysis results for those evidences
+    ai_results = AIAnalysis.objects.filter(evidence__in=evidences)
+
+    return case, evidences, ai_results
+
+def generate_case_report(case_id):
+    case, evidences, ai_results = get_case_analysis(case_id)
+
+    file_path = f"case_{case.case_id}_report.pdf"
+    pdf = canvas.Canvas(file_path, pagesize=letter)
+
+    pdf.setTitle(f"Forensic Case Report - {case.title}")
+
+    # 📌 Case Header
+    pdf.setFont("Helvetica-Bold", 16)
+    pdf.drawString(200, 750, "Forensic Case Report")
+    pdf.setFont("Helvetica", 12)
+    pdf.drawString(50, 720, f"Case ID: {case.case_id}")
+    pdf.drawString(50, 700, f"Case Name: {case.title}")
+    pdf.drawString(50, 680, f"Description: {case.description}")
+    pdf.drawString(50, 660, f"Status: {case.status}")
+
+    y_position = 640
+
+    # 📂 List Evidences
+    pdf.setFont("Helvetica-Bold", 14)
+    pdf.drawString(50, y_position, "Evidence Details:")
+    y_position -= 20
+    pdf.setFont("Helvetica", 12)
+    
+    for evidence in evidences:
+        pdf.drawString(50, y_position, f"- {evidence.file_type} ({evidence.file})")
+        y_position -= 20
+
+    # 📊 AI Analysis Results
+    pdf.setFont("Helvetica-Bold", 14)
+    pdf.drawString(50, y_position, "AI Analysis:")
+    y_position -= 20
+    pdf.setFont("Helvetica", 12)
+
+    for result in ai_results:
+        pdf.drawString(50, y_position, f"- {result.evidence.file_type}: {result.ai_results}")
+        y_position -= 20
+
+    pdf.save()
+    return file_path
+
+def generate_case_report_view(request, case_id):
+    file_path = generate_case_report(case_id)
+    return FileResponse(open(file_path, "rb"), as_attachment=True, content_type="application/pdf")
 
 

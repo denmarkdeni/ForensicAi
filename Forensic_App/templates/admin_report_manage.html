@@ -1,0 +1,71 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+      
+      <!-- System Metrics -->
+      <div class="mt-4">
+        <h2>Reports Summary</h2>
+        <div class="card">
+          <div class="chart-container">
+            <canvas id="casesChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Management -->
+      <div class="mt-4">
+        <h2>Report Management</h2>
+        <div class="card">
+          <div>
+            <a href="{% url 'generate_case_report_view' 'C433' %}" class="btn btn-primary">Download Report</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Case Management -->
+      <div class="mt-4">
+        <h2>Case Management</h2>
+        <div class="card">
+          <h3>Case Actions</h3>
+          <div>
+            <a href="/admin_case_manage#CreateCase" class="btn btn-success">Create Case</a>
+            <a href="/admin_case_manage#CaseList" class="btn btn-info">Case List</a>
+            <a href="/admin_case_manage#CaseList" class="btn btn-danger">Case Details</a>
+          </div>
+        </div>
+      </div>
+
+
+  <script>
+
+    const usersCount = {{ users_count }};
+    const CasesCount = {{ cases_count }};
+    const PendingCases = {{ pending_cases }};
+    const SolvedCases = {{ solved_cases }};
+
+    const ctx = document.getElementById('casesChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',  // Changed to Bar Chart
+      data: {
+        labels: ['Active Users', 'Total Cases', 'Pending Cases', 'Solved Cases'],
+        datasets: [{
+          label: 'System Metrics',
+          data: [usersCount, CasesCount, PendingCases, SolvedCases],
+          backgroundColor: ['#3498db', '#e74c3c', '#f1c40f', '#2ecc71'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+  </script>
+
+{% endblock %}
