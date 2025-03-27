@@ -1,7 +1,8 @@
 {% extends 'admin_base.html' %}
 
 {% block content %}
-      
+
+      {% if request.user.is_superuser %}
       <!-- System Metrics -->
       <div class="mt-4">
         <h2>System Overview</h2>
@@ -24,7 +25,9 @@
           </div>
         </div>
       </div>
+      {% endif %}
 
+      {% if request.user.is_superuser or request.user.userinfo.userRole == 'investigator' %}
       <!-- Case Management -->
       <div class="mt-4">
         <h2>Case Management</h2>
@@ -37,7 +40,9 @@
           </div>
         </div>
       </div>
+      {% endif %}
 
+      {% if request.user.userinfo.userRole != 'system_user' %}
       <!-- Evidence Management -->
       <div class="mt-4">
         <h2>Evidence Management</h2>
@@ -50,22 +55,36 @@
           </div>
         </div>
       </div>
+      {% endif %}
 
+      {% if request.user.is_superuser or request.user.userinfo.userRole == 'analyst' %}
       <!-- Ai Analysis -->
       <div class="mt-4">
         <h2>Ai Analysis</h2>
         <div class="card">
           <h3>Analysis Actions</h3>
           <div>
-            <a href="/ai-dashboard" class="btn btn-dark">Ai Analysis</a>
+            <a href="/admin_ai_manage" class="btn btn-dark">Ai Analysis</a>
             {% comment %} <a href="/evidence" class="btn btn-danger">Evidence List</a>
             <a href="/evidence-review" class="btn btn-secondary">Review Evidence</a> {% endcomment %}
           </div>
         </div>
       </div>
+      {% endif %}
+
+      <!-- Reports -->
+      <div class="mt-4">
+        <h2>Reports</h2>
+        <div class="card">
+          <h3>Report Actions</h3>
+          <div>
+            <a href="/admin_report_manage" class="btn btn-primary">View Reports</a>
+            <a href="/admin_report_manage" class="btn btn-warning">Generate Report</a>
+          </div>
+        </div>
 
       <!-- System Logs -->
-      <div class="mt-4">
+      {% comment %} <div class="mt-4">
         <h2>System Logs</h2>
         <div class="card">
           <h3>Recent Activity</h3>
@@ -91,22 +110,10 @@
                 <td>Admin</td>
                 <td>Case "C1234" uploaded.</td>
               </tr>
-              <tr>
-                <td>2025-02-24 11:00</td>
-                <td>Evidence Upload</td>
-                <td>Jane</td>
-                <td>New evidence uploaded for case "C1234".</td>
-              </tr>
-              <tr>
-                <td>2025-02-24 11:30</td>
-                <td>Login</td>
-                <td>Jane</td>
-                <td>User "Jane" logged in.</td>
-              </tr>
             </tbody>
           </table>
         </div>
-      </div>
+      </div> {% endcomment %}
     
 
   <!-- Chart.js Script -->

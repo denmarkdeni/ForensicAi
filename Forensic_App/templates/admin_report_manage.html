@@ -14,44 +14,52 @@
 
       <!-- User Management -->
       <div class="mt-4">
-        <h2>Report Management</h2>
+        <h2>Case Reports</h2>
         <div class="card">
-          <div>
-            <a href="{% url 'generate_case_report_view' 'C433' %}" class="btn btn-primary">Download Report</a>
-          </div>
+          <table class="table">
+            <thead>
+                <tr>
+                    <th>Case ID</th>
+                    <th>Case Name</th>
+                    <th>Start Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for case in cases %}
+                <tr data-case-id="{{ case.id }}">
+                    <td>{{ case.case_id }}</td>
+                    <td>{{ case.title }}</td>
+                    <td>{{ case.created_at }}</td>
+                    <td>{{ case.status }}</td>
+                    <td>
+                      <a href="{% url 'generate_case_report_view' case.case_id %}" class="btn btn-primary">Download Report</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+          </table>
         </div>
       </div>
-
-      <!-- Case Management -->
-      <div class="mt-4">
-        <h2>Case Management</h2>
-        <div class="card">
-          <h3>Case Actions</h3>
-          <div>
-            <a href="/admin_case_manage#CreateCase" class="btn btn-success">Create Case</a>
-            <a href="/admin_case_manage#CaseList" class="btn btn-info">Case List</a>
-            <a href="/admin_case_manage#CaseList" class="btn btn-danger">Case Details</a>
-          </div>
-        </div>
-      </div>
-
 
   <script>
 
-    const usersCount = {{ users_count }};
-    const CasesCount = {{ cases_count }};
-    const PendingCases = {{ pending_cases }};
-    const SolvedCases = {{ solved_cases }};
+    const total_cases = {{ total_cases }};
+    const total_evidences = {{ total_evidences }};
+    const total_ai_analyses = {{ total_ai_analyses }};
+    const total_reports = {{ total_reports }};
+    const pending_reports = {{ pending_reports }};
 
     const ctx = document.getElementById('casesChart').getContext('2d');
     new Chart(ctx, {
       type: 'bar',  // Changed to Bar Chart
       data: {
-        labels: ['Active Users', 'Total Cases', 'Pending Cases', 'Solved Cases'],
+        labels: ['Total Cases', 'Total Evidences', 'Total Ai Analyses', 'Total Reports', 'Pending Reports'],
         datasets: [{
           label: 'System Metrics',
-          data: [usersCount, CasesCount, PendingCases, SolvedCases],
-          backgroundColor: ['#3498db', '#e74c3c', '#f1c40f', '#2ecc71'],
+          data: [total_cases, total_evidences, total_ai_analyses, total_reports,pending_reports],
+          backgroundColor: ['#ddb847', '#6b540f', '#f1c40f', '#b6cd14', '#f39c12'],
           borderWidth: 1
         }]
       },

@@ -67,10 +67,10 @@ def recognize_faces(image_path):
     return results
 
 # Example usage
-if __name__ == "__main__":
-    test_image = r"C:\Users\Admin\Desktop\ForensicAi\ForensicAi\Forensic_App\static\images\face.jpg"  # Replace with actual image path
-    results = recognize_faces(test_image)
-    print(results)
+# if __name__ == "__main__":
+#     test_image = r"C:\Users\Admin\Desktop\ForensicAi\ForensicAi\Forensic_App\static\images\face.jpg"  # Replace with actual image path
+#     results = recognize_faces(test_image)
+#     print(results)
     
 
 def process_image(image_path):

@@ -48,11 +48,12 @@ def Login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            messages.success(request, 'Signed In successfully!')
+            messages.success(request, f"Welcome 😊, {user.username} , you are logged in successfully!...🤝")
             return redirect('admin_dashboard')
-            
+           
         else:
             messages.error(request, 'Invalid username or password')
+            redirect('login')
     return render(request,'signin.html')
 
 def admin_dashboard(request):
@@ -92,7 +93,13 @@ def admin_ai_manage(request):
     return render(request, 'admin_ai_manage.html', {'ai_analyses': ai_analyses})
 
 def admin_report_manage(request):
-    return render(request, 'admin_report_manage.html')
+    cases = Case.objects.all()
+    total_cases = Case.objects.all().count()
+    total_evidences = Evidence.objects.all().count()    
+    total_ai_analyses = AIAnalysis.objects.all().count()
+    total_reports = Case.objects.filter(is_reported=True).count()
+    pending_reports = Case.objects.filter(is_reported=False).count()
+    return render(request, 'admin_report_manage.html', {'total_cases': total_cases, 'total_evidences': total_evidences, 'total_ai_analyses': total_ai_analyses, 'total_reports': total_reports, 'pending_reports': pending_reports, 'cases': cases})
 
 def Logout(request):
     logout(request)
@@ -262,7 +269,9 @@ def delete_evidence(request, evidence_id):
 def view_evidence_details(request, evidence_id):
     evidence = get_object_or_404(Evidence, id=evidence_id)
     return render(request, "evidence_details.html", {"evidence": evidence})
+
 #-----------------------------------------------------------------------------------------------------------------
+
 def evidence_review(request):
     evidences = Evidence.objects.all()
     return render(request, 'evidence_review.html', {'evidences': evidences})
@@ -306,7 +315,6 @@ def detect_emotion(request):
 def ai_analysis_dashboard(request):
     """Shows all cases with 'View Evidence' buttons."""
     cases = Case.objects.all()
-    print(cases)
     return render(request, "ai_analysis_dashboard.html", {"cases": cases})
 
 def case_evidences(request, case_id):
@@ -347,10 +355,6 @@ def analyze_evidence(request, evidence_id):
 
 # ------------------------------------->>>> 📌 Case Analysis Report
 
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-from django.http import FileResponse
-
 def get_case_analysis(case_id):
     # Fetch case details
     case = Case.objects.get(case_id=case_id)
@@ -363,50 +367,218 @@ def get_case_analysis(case_id):
 
     return case, evidences, ai_results
 
+from django.http import FileResponse, HttpResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet
+from xml.sax.saxutils import escape
+import re , tempfile
+
+def format_ai_analysis(ai_results):
+    formatted_results = []
+    styles = getSampleStyleSheet()
+
+    for result in ai_results:
+        file_type = result.evidence.file_type.lower()
+        analysis = result.ai_results  # Dictionary with AI results
+
+        formatted_text = f"<b>{escape(file_type.capitalize())} Analysis:</b><br/>"
+
+        if file_type == "image":
+            formatted_text += f"Face Detection: {escape(str(analysis.get('face_detection', {}).get('message', 'No data')))}<br/>"
+            formatted_text += f"Objects Detected: {', '.join(analysis.get('object_detection', {}).get('objects', ['None']))}<br/>"
+            
+            # Extract OCR text safely from nested dictionary
+            ocr_data = analysis.get("ocr_text", {})  
+            if isinstance(ocr_data, str):
+                try:
+                    import json
+                    ocr_data = json.loads(ocr_data)  # Convert string to dictionary
+                except json.JSONDecodeError:
+                    ocr_data = {}
+            ocr_text = ocr_data.get("ocr_text", "No OCR data") 
+
+            # Extract first line
+            first_line = ocr_text.split("\n")[0]
+
+            # Count special characters (excluding spaces and alphanumeric characters)
+            special_chars = re.findall(r"[^A-Za-z0-9\s]", first_line)
+
+            # Filter based on conditions
+            if len(ocr_text) < 300 and len(special_chars) < 5:
+                formatted_text += f"OCR Text: {escape(ocr_text)}<br/>"
+            else:
+                formatted_text += "OCR Text: No Text found...<br/>"
+            
+            formatted_text += f"Forgery Detection: {escape(str(analysis.get('forgery_detection', 'No data')))}<br/>"
+            metadata = analysis.get("metadata", {})
+
+            if not isinstance(metadata, dict):
+                metadata = {}  # If metadata is a string or None, reset it to an empty dict
+
+            formatted_text += f"Metadata: Device: {metadata.get('device', 'Unknown')}, "
+            formatted_text += f"Location: {metadata.get('location', 'No GPS')}, "
+            formatted_text += f"Date: {metadata.get('date_time', 'Unknown')}<br/>"
+
+        elif file_type == "document":
+            extracted_text = analysis.get('text', 'No extracted text available')
+            confidence = analysis.get('confidence', 'Unknown')
+
+            formatted_text += f"Extracted Text:<br/>{escape(extracted_text)}<br/>"
+            
+            formatted_text += f"Confidence Score: {escape(str(confidence))}<br/>"
+
+        elif file_type == "audio":
+            formatted_text += f"Transcript:<br/>{escape(analysis.get('transcript', 'No transcript available'))}<br/>"
+            formatted_text += f"Suspicious Phrases: {escape(', '.join(analysis.get('suspicious_phrases', ['None'])))}<br/>"
+            formatted_text += f"Confidence Score: {escape(str(analysis.get('confidence', 'Unknown')))}<br/>"
+
+        elif file_type == "video":
+            formatted_text += f"Alert: {escape(analysis.get('message', 'No alerts detected'))}<br/>"
+            formatted_text += f"Suspicious Objects:<br/>"
+            for frame, obj in enumerate(analysis.get('objects', []), start=1):
+                formatted_text += f"Frame {frame}: {escape(obj)}<br/>"
+            
+            formatted_text += f"Confidence Score: {escape(str(analysis.get('confidence', 'Unknown')))}<br/>"
+
+        formatted_results.append(Paragraph(formatted_text, styles["BodyText"]))
+        formatted_results.append(Spacer(1, 6))
+
+    return formatted_results
+
 def generate_case_report(case_id):
     case, evidences, ai_results = get_case_analysis(case_id)
 
-    file_path = f"case_{case.case_id}_report.pdf"
-    pdf = canvas.Canvas(file_path, pagesize=letter)
-
-    pdf.setTitle(f"Forensic Case Report - {case.title}")
-
-    # 📌 Case Header
-    pdf.setFont("Helvetica-Bold", 16)
-    pdf.drawString(200, 750, "Forensic Case Report")
-    pdf.setFont("Helvetica", 12)
-    pdf.drawString(50, 720, f"Case ID: {case.case_id}")
-    pdf.drawString(50, 700, f"Case Name: {case.title}")
-    pdf.drawString(50, 680, f"Description: {case.description}")
-    pdf.drawString(50, 660, f"Status: {case.status}")
-
-    y_position = 640
-
-    # 📂 List Evidences
-    pdf.setFont("Helvetica-Bold", 14)
-    pdf.drawString(50, y_position, "Evidence Details:")
-    y_position -= 20
-    pdf.setFont("Helvetica", 12)
+     # Create a temporary file
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+    file_path = temp_file.name 
     
+    # 📝 Create PDF document
+    pdf = SimpleDocTemplate(file_path, pagesize=letter)
+    styles = getSampleStyleSheet()
+    elements = []
+
+    # 🎯 **Title**
+    title = Paragraph(f"<b>Forensic Case Report</b>", styles["Title"])
+    elements.append(title)
+    elements.append(Spacer(1, 12))
+
+    # 📝 **Case Details**
+    case_info = [
+        ["Case ID:", case.case_id],
+        ["Case Name:", case.title],
+        ["Description:", case.description],
+        ["Status:", case.status]
+    ]
+    case_table = Table(case_info, colWidths=[100, 400])
+    case_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 6),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+    ]))
+    elements.append(case_table)
+    elements.append(Spacer(1, 12))
+
+    # 📂 **Evidence List**
+    elements.append(Paragraph("<b>Evidence Details:</b>", styles["Heading2"]))
+    evidence_data = [["File Type", "File Name"]]
     for evidence in evidences:
-        pdf.drawString(50, y_position, f"- {evidence.file_type} ({evidence.file})")
-        y_position -= 20
+        evidence_data.append([evidence.file_type, evidence.file])
 
-    # 📊 AI Analysis Results
-    pdf.setFont("Helvetica-Bold", 14)
-    pdf.drawString(50, y_position, "AI Analysis:")
-    y_position -= 20
-    pdf.setFont("Helvetica", 12)
+    evidence_table = Table(evidence_data, colWidths=[150, 350])
+    evidence_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 6),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.lightgrey),
+    ]))
+    elements.append(evidence_table)
+    elements.append(Spacer(1, 12))
 
-    for result in ai_results:
-        pdf.drawString(50, y_position, f"- {result.evidence.file_type}: {result.ai_results}")
-        y_position -= 20
+    # 📊 **AI Analysis Results**
+    elements.append(Paragraph("<b>AI Analysis:</b>", styles["Heading2"]))
+    elements.extend(format_ai_analysis(ai_results))
 
-    pdf.save()
+    # Add Copyright Notice
+    copyright_text = Paragraph("<b>Copyright © 2025 Forensic AI. All rights reserved.</b>", styles["BodyText"])
+    elements.append(Spacer(1, 12))  
+    elements.append(copyright_text)
+
+    # 📝 **Build and Save PDF**
+    pdf.build(elements)
+
+    # ✅ Mark the case as reported
+    case.is_reported = True
+    case.save()
+
     return file_path
 
+# 🎯 **Django View to Download PDF**
 def generate_case_report_view(request, case_id):
     file_path = generate_case_report(case_id)
-    return FileResponse(open(file_path, "rb"), as_attachment=True, content_type="application/pdf")
+
+    # Serve the PDF for download
+    response = FileResponse(open(file_path, "rb"), as_attachment=True, content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="case_{case_id}_report.pdf"'
+
+    return response
+
+# ----------------------------------------------------------------->>>>>>>>>>>>>>>>>
 
 
+def investigator_dashboard(request):
+    investigator = request.user 
+
+    cases = Case.objects.filter(investigator=investigator)
+    total_cases = cases.count()
+    open_cases = cases.filter(status="Open").count()
+    closed_cases = cases.filter(status="Closed").count()
+
+    # Count evidence for each case
+    for case in cases:
+        case.evidence_count = Evidence.objects.filter(case=case).count()
+
+    # Get AI analysis related to assigned cases
+    evidence = Evidence.objects.filter(case__in=cases)
+
+    context = {
+        "cases": cases,
+        "total_cases": total_cases,
+        "open_cases": open_cases,
+        "closed_cases": closed_cases,
+        "ai_results": evidence,
+    }
+    
+    return render(request, "investigator_dashboard.html", context)
+
+def analyst_dashboard(request):
+    analyst = request.user 
+
+    cases = Case.objects.filter(analyst=analyst)
+    total_cases = cases.count()
+    open_cases = cases.filter(status="Open").count()
+    closed_cases = cases.filter(status="Closed").count()
+
+    # Count evidence for each case
+    for case in cases:
+        case.evidence_count = Evidence.objects.filter(case=case).count()
+
+    # Get AI analysis related to assigned cases
+    evidence = Evidence.objects.filter(case__in=cases)
+
+    context = {
+        "cases": cases,
+        "total_cases": total_cases,
+        "open_cases": open_cases,
+        "closed_cases": closed_cases,
+        "ai_results": evidence,
+    }
+    
+    return render(request, "analyst_dashboard.html", context)

@@ -34,6 +34,9 @@ urlpatterns = [
     path('admin_ai_manage/',views.admin_ai_manage,name='admin_ai_manage'),
     path('admin_report_manage/',views.admin_report_manage,name='admin_report_manage'),
 
+    path('investigator_dashboard/',views.investigator_dashboard,name='investigator_dashboard'),
+    path('analyst_dashboard/',views.analyst_dashboard,name='analyst_dashboard'),
+
     path("add_user/", views.add_user, name="add_user"),
     path("update-user/<int:user_id>/", views.update_user, name="update-user"),
     path("delete-user/<int:user_id>/", views.delete_user, name="delete-user"),
@@ -51,7 +54,7 @@ urlpatterns = [
     path("generate_case_report_view/<str:case_id>/", views.generate_case_report_view, name="generate_case_report_view"),
 
     path('evidence-review/', views.evidence_review, name='evidence_review'),
-    path('live/', views.live_emotion, name='live_emotion'),
+    path('live-emotion/', views.live_emotion, name='live_emotion'),
     path('detect_emotion/', views.detect_emotion, name='detect_emotion'),
     path("ai-dashboard/", views.ai_analysis_dashboard, name="ai_dashboard"),
     path("case/<str:case_id>/evidences/", views.case_evidences, name="case_evidences"),

@@ -122,6 +122,19 @@
     .custom-back-btn:hover {
       background-color: #d63c12; /* Darker shade on hover */
     }
+    .messages {
+      position: fixed;
+      top: 105px;
+      right: 12%;
+      font-size: 1.2em;
+      background: #71a0cf;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+      z-index: 1000;
+      transition: opacity 0.5s ease;
+  }
+    
   </style>
 </head>
 <body>
@@ -130,10 +143,23 @@
   <div class="sidebar">
     <h2 style="color: white; text-align: center;">Forensic Ai</h2>
     <a href="/admin_dashboard"><i class="fas fa-home"></i> Dashboard</a>
+
+    {% if request.user.is_superuser %}
     <a href="/admin_user_manage"><i class="fas fa-users"></i> User Management</a>
+    {% endif %}
+
+    {% if request.user.is_superuser or request.user.userinfo.userRole == 'investigator' %}
     <a href="/admin_case_manage"><i class="fas fa-briefcase"></i> Case Management</a>
+    {% endif %}
+    
+    {% if request.user.userinfo.userRole != 'system_user' %}
     <a href="/admin_evidence_manage"><i class="fas fa-file-alt"></i> Evidence Management</a>
+    {% endif %}
+
+    {% if request.user.is_superuser or request.user.userinfo.userRole == 'analyst' %}
     <a href="/admin_ai_manage"><i class="fas fa-cog"></i> AI Analysis</a>
+    {% endif %}
+    
     <a href="/admin_report_manage"><i class="fas fa-chart-bar"></i> Reports</a>
   </div>
 
@@ -141,7 +167,15 @@
   <div class="content">
     <!-- Header -->
     <div class="dashboard-header">
+      {% if request.user.userinfo.userRole == 'system_user' %}
+      <h1>User Dashboard</h1>
+      {% elif request.user.userinfo.userRole == 'investigator' %}
+      <h1>Investigator Dashboard</h1>
+      {% elif request.user.userinfo.userRole == 'analyst' %}
+      <h1>Analyst Dashboard</h1>
+      {% elif request.user.is_superuser %}
       <h1>Admin Dashboard</h1>
+      {% endif %}
       <div>
         <button id="darkModeToggle" class="btn-dark-mode">🌗</button>
         <a href="/logout"><button class="btn btn-danger">Logout</button></a>
@@ -154,6 +188,28 @@
         {% endblock %}
     </div>
   </div>
+
+  {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+
+        <script>
+            // Wait for the page to load
+            document.addEventListener("DOMContentLoaded", function () {
+                setTimeout(function () {
+                    let messages = document.querySelector(".messages");
+                    if (messages) {
+                        messages.style.transition = "opacity 0.5s ease";
+                        messages.style.opacity = "0";
+                        setTimeout(() => messages.remove(), 500); 
+                    }
+                }, 4000); 
+            });
+        </script> 
+    {% endif %}
 
   <script>
 

@@ -74,11 +74,15 @@
                         <td>{{ case.created_by }}</td>
                 </tbody>
             </table>
+            {% if request.user.is_superuser or request.user.userinfo.userRole == 'investigator' %}
             <!-- Save & Delete Buttons -->
             <div class="save-delete">
                 <button class="btn btn-success mt-2" id="saveChanges">Save Changes</button>
                 <button class="btn btn-danger mt-2" id="deleteCase">Delete Case</button>
             </div>
+            {% else %}
+            <p>You do not have permission to edit this case.</p>
+            {% endif %}
         </div>
       </div>
 
