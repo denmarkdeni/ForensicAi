@@ -65,7 +65,7 @@ Welcome to **ForensicAi** — an AI-enhanced forensic case tracking and analysis
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="images/forensi_ai_logo.jpg" width="600" alt="Dashboard Screenshot" />
+  <img src="https://github.com/denmarkdeni/ForensicAi/blob/main/Forensic_App/static/images/forensi_ai_logo.jpeg?raw=true" width="400" alt="Dashboard Screenshot" />
 </p>
 
 ---
