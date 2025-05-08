@@ -2,6 +2,24 @@
 
 Welcome to **ForensicAi** — an AI-enhanced forensic case tracking and analysis platform designed to support investigators, analysts, and admins with digital tools for streamlined operations and intelligent insights.
 
+## 🚀 Installation 
+
+- 🧠 install VS 2022 C++ Compiler from C++ development tools 
+- 🏗️ verify the installation
+- 💡 Install Python 3.11.5
+
+- ### setup Instruction
+  
+```bash
+git clone https://github.com/yourusername/estateconnect.git
+cd estateconnect
+py -m venv env
+env\Scripts\activate
+pip install -r requirements.txt
+python manage.py makemigratons
+python manage.py migrate
+python manage.py runserver
+```
 ---
 
 ## 🌟 Key Features
